@@ -1,0 +1,31 @@
+name: Android Build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Run Tests
+        run: ./gradlew test
+
+      - name: Archive Test Reports
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: 'test-reports'
+          path: **/build/reports/tests/
+
+      - name: Assemble
+        run: ./gradlew assemble
+
+      - name: Temporarily Archive AARs
+        uses: actions/upload-artifact@v2
+        with:
+          name: 'temp-aars'
+          path: vessel-runtime/build/outputs/aar
