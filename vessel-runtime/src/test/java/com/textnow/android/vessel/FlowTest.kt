@@ -24,19 +24,22 @@
 package com.textnow.android.vessel
 
 import android.os.Build
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactly
-import assertk.assertions.hasSize
 import com.textnow.android.vessel.model.SimpleData
 import com.textnow.android.vessel.model.firstSimple
 import com.textnow.android.vessel.model.mapped
 import com.textnow.android.vessel.model.secondSimple
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -47,29 +50,52 @@ import org.robolectric.annotation.Config
  *
  * This test is focused on the flow() callback.
  */
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(
     sdk = [Build.VERSION_CODES.P],
     manifest = Config.NONE
 )
 class FlowTest : BaseVesselTest() {
+    private val dispatcher = TestCoroutineDispatcher()
+    private val scope = TestCoroutineScope(dispatcher)
+
+    @get:Rule
+    val instantExecutorRule = InstantTaskExecutorRule()
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(dispatcher = dispatcher)
+    }
+
+    @After
+    fun teardown() {
+        Dispatchers.resetMain()
+        dispatcher.cleanupTestCoroutines()
+    }
 
     @Test
-    fun `flow receives all updates for the correct type`() = runBlocking {
-        val job = async {
+    fun `flow receives all updates for the correct type`() = scope.runBlockingTest {
+        val result = mutableListOf<SimpleData?>()
+        val job = launch {
             vessel.flow(SimpleData::class)
-                .take(count = 2)
-                .toList()
+                .collect {
+                    println("Collected $it")
+                    result.add(it)
+                }
         }
+
+        assertThat(result).containsExactly(null)
 
         vessel.set(firstSimple)
-        vessel.set(mapped)
-        vessel.set(secondSimple)
+        assertThat(result).containsExactly(null, firstSimple)
 
-        val events = job.await()
-        assertThat(events).all {
-            hasSize(2)
-            containsExactly(firstSimple, secondSimple)
-        }
+        vessel.set(mapped)
+        assertThat(result).containsExactly(null, firstSimple)
+
+        vessel.set(secondSimple)
+        assertThat(result).containsExactly(null, firstSimple, secondSimple)
+
+        job.cancel()
     }
 }

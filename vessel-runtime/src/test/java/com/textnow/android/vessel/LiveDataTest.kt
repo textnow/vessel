@@ -67,9 +67,9 @@ class LiveDataTest : BaseVesselTest() {
 
         try {
             livedata.observeForever(observer)
-            vessel.setBlocking(firstSimple)
-            vessel.setBlocking(mapped)
-            vessel.setBlocking(secondSimple)
+            vessel.set(firstSimple)
+            vessel.set(mapped)
+            vessel.set(secondSimple)
         } finally {
             livedata.removeObserver(observer)
         }
