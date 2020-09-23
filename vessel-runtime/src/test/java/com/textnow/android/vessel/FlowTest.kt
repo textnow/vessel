@@ -25,17 +25,20 @@ package com.textnow.android.vessel
 
 import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactly
-import assertk.assertions.hasSize
 import com.textnow.android.vessel.model.SimpleData
 import com.textnow.android.vessel.model.firstSimple
 import com.textnow.android.vessel.model.mapped
 import com.textnow.android.vessel.model.secondSimple
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.*
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,38 +48,54 @@ import org.robolectric.annotation.Config
  * Validate functionality of the Vessel implementation.
  * These tests will rely on the in-memory room database so we can verify proper serialization.
  *
- * This test relies on InstantTaskExecutorRule, which breaks Room @Transactions; so it is being
- * tested separately.
+ * This test is focused on the flow() callback.
  */
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(
     sdk = [Build.VERSION_CODES.P],
     manifest = Config.NONE
 )
-class LiveDataTest : BaseVesselTest() {
+class FlowTest : BaseVesselTest() {
+    private val dispatcher = TestCoroutineDispatcher()
+    private val scope = TestCoroutineScope(dispatcher)
+
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    @Before
+    fun setup() {
+        Dispatchers.setMain(dispatcher = dispatcher)
+    }
+
+    @After
+    fun teardown() {
+        Dispatchers.resetMain()
+        dispatcher.cleanupTestCoroutines()
+    }
+
     @Test
-    fun `livedata receives all updates for the correct type`() = runBlocking {
-        val events = mutableListOf<SimpleData>()
-        val livedata = vessel.livedata(SimpleData::class)
-        val observer = Observer<SimpleData?> {
-            it?.let { events.add(it) }
+    fun `flow receives all updates for the correct type`() = scope.runBlockingTest {
+        val result = mutableListOf<SimpleData?>()
+        val job = launch {
+            vessel.flow(SimpleData::class)
+                .collect {
+                    println("Collected $it")
+                    result.add(it)
+                }
         }
 
-        try {
-            livedata.observeForever(observer)
-            vessel.set(firstSimple)
-            vessel.set(mapped)
-            vessel.set(secondSimple)
-        } finally {
-            livedata.removeObserver(observer)
-        }
+        assertThat(result).containsExactly(null)
 
-        assertThat(events).all {
-            hasSize(2)
-            containsExactly(firstSimple, secondSimple)
-        }
+        vessel.set(firstSimple)
+        assertThat(result).containsExactly(null, firstSimple)
+
+        vessel.set(mapped)
+        assertThat(result).containsExactly(null, firstSimple)
+
+        vessel.set(secondSimple)
+        assertThat(result).containsExactly(null, firstSimple, secondSimple)
+
+        job.cancel()
     }
 }
