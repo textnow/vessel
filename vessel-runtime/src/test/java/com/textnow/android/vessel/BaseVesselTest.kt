@@ -56,7 +56,12 @@ abstract class BaseVesselTest : KoinTest {
     }
     @After
     fun tearDown() {
-        vessel.close()
+        try {
+            vessel.clear()
+            vessel.close()
+        } catch (ise: IllegalStateException) {
+            // ignore when the db is already closed
+        }
     }
 
     // Overridden so subclasses don't have to

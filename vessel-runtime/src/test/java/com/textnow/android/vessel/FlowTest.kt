@@ -24,8 +24,6 @@
 package com.textnow.android.vessel
 
 import android.os.Build
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import assertk.all
 import assertk.assertThat
@@ -35,8 +33,10 @@ import com.textnow.android.vessel.model.SimpleData
 import com.textnow.android.vessel.model.firstSimple
 import com.textnow.android.vessel.model.mapped
 import com.textnow.android.vessel.model.secondSimple
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -45,35 +45,28 @@ import org.robolectric.annotation.Config
  * Validate functionality of the Vessel implementation.
  * These tests will rely on the in-memory room database so we can verify proper serialization.
  *
- * This test relies on InstantTaskExecutorRule, which breaks Room @Transactions; so it is being
- * tested separately.
+ * This test is focused on the flow() callback.
  */
 @RunWith(AndroidJUnit4::class)
 @Config(
     sdk = [Build.VERSION_CODES.P],
     manifest = Config.NONE
 )
-class LiveDataTest : BaseVesselTest() {
-    @get:Rule
-    val instantExecutorRule = InstantTaskExecutorRule()
+class FlowTest : BaseVesselTest() {
 
     @Test
-    fun `livedata receives all updates for the correct type`() = runBlocking {
-        val events = mutableListOf<SimpleData>()
-        val livedata = vessel.livedata(SimpleData::class)
-        val observer = Observer<SimpleData?> {
-            it?.let { events.add(it) }
+    fun `flow receives all updates for the correct type`() = runBlocking {
+        val job = async {
+            vessel.flow(SimpleData::class)
+                .take(count = 2)
+                .toList()
         }
 
-        try {
-            livedata.observeForever(observer)
-            vessel.setBlocking(firstSimple)
-            vessel.setBlocking(mapped)
-            vessel.setBlocking(secondSimple)
-        } finally {
-            livedata.removeObserver(observer)
-        }
+        vessel.set(firstSimple)
+        vessel.set(mapped)
+        vessel.set(secondSimple)
 
+        val events = job.await()
         assertThat(events).all {
             hasSize(2)
             containsExactly(firstSimple, secondSimple)

@@ -30,9 +30,6 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import assertk.assertions.isNull
 import com.textnow.android.vessel.model.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,13 +39,11 @@ import org.robolectric.annotation.Config
  * Validate functionality of the Vessel implementation.
  * These tests will rely on the in-memory room database so we can verify proper serialization.
  */
-@FlowPreview
 @RunWith(AndroidJUnit4::class)
 @Config(
     sdk = [Build.VERSION_CODES.P],
     manifest = Config.NONE
 )
-@ExperimentalCoroutinesApi
 class VesselImplTest: BaseVesselTest() {
 
     @Test
@@ -101,7 +96,7 @@ class VesselImplTest: BaseVesselTest() {
     @Test
     fun `delete removes data`() {
         vessel.setBlocking(firstSimple)
-        vessel.deleteBlocking(SimpleData::class);
+        vessel.deleteBlocking(SimpleData::class)
         val result = vessel.getBlocking(SimpleData::class)
         assertThat(result).isNull()
     }
@@ -133,7 +128,7 @@ class VesselImplTest: BaseVesselTest() {
     @Test
     fun `suspending delete removes data`() = runBlocking {
         vessel.set(firstSimple)
-        vessel.delete(SimpleData::class);
+        vessel.delete(SimpleData::class)
         val result = vessel.get(SimpleData::class)
         assertThat(result).isNull()
     }
@@ -166,16 +161,5 @@ class VesselImplTest: BaseVesselTest() {
         assertThat(vessel.get(SimpleData::class)).isNull()
         assertThat(vessel.get(MappedData::class)).isNull()
         assertThat(vessel.get(NestedData::class)).isNull()
-    }
-
-    @Test
-    fun `flow receives all updates for the correct type`() = runBlocking {
-        val channel = vessel.flow(SimpleData::class).produceIn(this)
-        vessel.set(firstSimple)
-        vessel.set(mapped)
-        assertThat(channel.receive()).isEqualTo(firstSimple)
-        vessel.set(secondSimple)
-        assertThat(channel.receive()).isEqualTo(secondSimple)
-        channel.cancel()
     }
 }
