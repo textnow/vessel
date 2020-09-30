@@ -11,6 +11,10 @@ buildscript {
     }
 }
 
+plugins {
+    id("com.vanniktech.android.junit.jacoco") version Versions.vannikJacoco
+}
+
 allprojects {
     repositories {
         mavenLocal()
@@ -22,4 +26,22 @@ allprojects {
 tasks.register("clean").configure {
     delete(rootProject.buildDir)
     delete("buildSrc/build")
+}
+
+junitJacoco {
+    jacocoVersion = Versions.jacoco
+    excludes = listOf(
+        // Auto-generated code
+        "**/BuildConfig.*",
+        "**/*_Impl.*",
+        "**/*_Impl\$*.*",
+        // Jacoco can't handle these
+        "**/*\$Lambda\$*.*",
+        "**/*\$inlined\$*.*",
+        // Doesn't make sense to test these
+        "**/NoOp*.*",
+        "**/LoggingKt.*"
+    )
+    includeNoLocationClasses = true
+    includeInstrumentationCoverageInMergedReport = true
 }
