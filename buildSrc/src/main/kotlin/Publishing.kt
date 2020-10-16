@@ -21,23 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-object Versions {
-    const val kotlin = "1.3.72"
-    const val androidGradle = "3.6.4"
-    const val vannikJacoco = "0.16.0"
-    const val jacoco = "0.8.6"
-    const val dokka = "1.4.10"
 
-    const val coroutine = "1.3.9"
-    const val room = "2.2.5"
-    const val lifecycle = "2.2.0"
-    const val gson = "2.8.6"
-    const val junit = "4.1.13"
-    const val koin = "2.1.6"
-    const val androidXTest = "1.3.0"
-    const val androidXJunit = "1.1.2"
-    const val androidXCoreTest = "2.1.0"
-    const val robolectric = "4.4"
-    const val mockk = "1.10.0"
-    const val assertk = "0.23"
+const val VesselGroupId = "com.textnow.android.vessel"
+
+object GithubPackageRepository {
+    private const val baseUrl = "https://maven.pkg.github.com"
+    private const val owner = "textnow"
+    const val repoName = "GitHubPackages"
+    private const val repoId = "vessel"
+    const val url = "${baseUrl}/${owner}/${repoId}"
+
+    private val env = System.getenv()
+    val username: String = env.getOrDefault("GHR_USER", "")
+    val password: String = env.getOrDefault("GHR_PASSWORD", "")
 }

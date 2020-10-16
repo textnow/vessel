@@ -21,23 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-object Versions {
-    const val kotlin = "1.3.72"
-    const val androidGradle = "3.6.4"
-    const val vannikJacoco = "0.16.0"
-    const val jacoco = "0.8.6"
-    const val dokka = "1.4.10"
+object AppVersions {
+    private val env = System.getenv()
 
-    const val coroutine = "1.3.9"
-    const val room = "2.2.5"
-    const val lifecycle = "2.2.0"
-    const val gson = "2.8.6"
-    const val junit = "4.1.13"
-    const val koin = "2.1.6"
-    const val androidXTest = "1.3.0"
-    const val androidXJunit = "1.1.2"
-    const val androidXCoreTest = "2.1.0"
-    const val robolectric = "4.4"
-    const val mockk = "1.10.0"
-    const val assertk = "0.23"
+    val code: Int = env.getOrDefault("VERSION_CODE", "1").toInt()
+    val name: String = env.getOrDefault("VERSION_NAME", "0.1")
+    val pr: String = env.getOrDefault("PR", "000")
 }
