@@ -1,5 +1,4 @@
 # Vessel
-todo: auto-gen github badge from release workflow (build status)
 ![Release](https://img.shields.io/github/v/release/textnow/vessel?include_prereleases)
 ![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgithub.com%2Ftextnow%2Fvessel%2Ftree%2Fmaster%2F.github%2Fbadges%2Fcoverage.json&style=flat)
 ![License](https://img.shields.io/github/license/textnow/vessel)
