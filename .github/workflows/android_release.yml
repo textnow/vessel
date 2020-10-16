@@ -8,11 +8,12 @@ on:
       release_version:
         description: 'Release version (X.Y.Z)'
 
+env:
+  VERSION_NAME: "${{ github.events.inputs.release_version }}"
+  VERSION_CODE: "${{ github.run_number }}"
+  BRANCH: "release/${{ github.events.inputs.release_version }}"
+
 jobs:
-  env:
-    VERSION_NAME: "${{ github.events.inputs.release_version }}"
-    VERSION_CODE: "${{ github.run_number }}"
-    BRANCH: "release/${{ env.VERSION_NAME }}"
 
   # Create a release branch to work from
   prepare_branch:
