@@ -39,7 +39,7 @@ jobs:
       - name: Commit Changes
         run: |
           git add CHANGELOG.md
-          git commit -m "Prepare release ${{ VERSION_NAME }}(${{ VERSION_CODE }})"
+          git commit -m "Prepare release ${{ env.VERSION_NAME }}(${{ env.VERSION_CODE }})"
           git push origin ${{ env.BRANCH }}
 
   # Test debug and release, run coverage against debug
