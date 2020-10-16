@@ -8,11 +8,13 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:${Versions.androidGradle}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokka}")
     }
 }
 
 plugins {
     id("com.vanniktech.android.junit.jacoco") version Versions.vannikJacoco
+    id("org.jetbrains.dokka") version Versions.dokka
 }
 
 allprojects {
@@ -23,9 +25,15 @@ allprojects {
     }
 }
 
-tasks.register("clean").configure {
-    delete(rootProject.buildDir)
-    delete("buildSrc/build")
+tasks {
+    dokkaGfmMultiModule.configure {
+        outputDirectory.set(buildDir.resolve("dokka"))
+    }
+
+    register("clean").configure {
+        delete(rootProject.buildDir)
+        delete("buildSrc/build")
+    }
 }
 
 junitJacoco {
