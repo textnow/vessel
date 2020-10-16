@@ -6,7 +6,14 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'Release version (X.Y.Z)'
+        description: 'Release version'
+        required: true
+        default: '0.0.0'
+
+env:
+  VERSION_NAME: "${{ github.event.inputs.release_version }}"
+  VERSION_CODE: "${{ github.run_number }}"
+  BRANCH: "release/${{ github.event.inputs.release_version }}"
 
 jobs:
 
@@ -14,12 +21,15 @@ jobs:
   prepare_branch:
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          echo "Building ${{ env.BRANCH }}"
+
       # Initial checkout against the base branch specified in the UI
       - uses: actions/checkout@v2
 
       # Then checkout a release branch using the requested name
       - name: Create Release Branch
-        run: git checkout -b release/${{ github.events.inputs.release_version }}
+        run: git checkout -b ${{ env.BRANCH }}
 
       - name: Initialize Git Config
         run: |
@@ -29,13 +39,13 @@ jobs:
       - name: Update Changelog
         uses: thomaseizinger/keep-a-changelog-new-release@v1
         with:
-          version: ${{ github.events.inputs.release_version }}
+          version: ${{ env.VERSION_NAME }}
 
       - name: Commit Changes
         run: |
           git add CHANGELOG.md
-          git commit -m "Prepare release ${{ github.events.inputs.release_version }} (${{ github.run_number }})"
-          git push origin release/${{ github.events.inputs.release_version }}
+          git commit -m "Prepare release ${{ env.VERSION_NAME }}(${{ env.VERSION_CODE }})"
+          git push origin ${{ env.BRANCH }}
 
   # Test debug and release, run coverage against debug
   test:
@@ -44,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: release/${{ github.events.inputs.release_version }}
+          ref: ${{ env.BRANCH }}
 
       - name: Initialize Git Config
         run: |
@@ -66,7 +76,7 @@ jobs:
         run: |
           git add .github/badges/coverage.json
           git commit -m "Update coverage badge"
-          git push origin release/${{ github.events.inputs.release_version }}
+          git push origin ${{ env.BRANCH }}
 
       - name: Archive Reports
         if: always()
@@ -82,7 +92,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: release/${{ github.events.inputs.release_version }}
+          ref: ${{ env.BRANCH }}
 
       - name: Setup JDK
         uses: actions/setup-java@v1
@@ -99,7 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: release/${{ github.events.inputs.release_version }}
+          ref: ${{ env.BRANCH }}
 
       - name: Setup JDK
         uses: actions/setup-java@v1
@@ -119,7 +129,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: release/${{ github.events.inputs.release_version }}
+          ref: ${{ env.BRANCH }}
 
       - name: Initialize Git Config
         run: |
@@ -136,8 +146,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.events.inputs.release_version }}
-          release_name: Release ${{ github.events.inputs.release_version }} (${{ github.run_number }})
+          tag_name: ${{ env.VERSION_NAME }}
+          release_name: Release ${{ env.VERSION_NAME }} (${{ env.VERSION_CODE }})
           body: |
             ${{ steps.release_notes.outputs.release_notes }}
           draft: false
