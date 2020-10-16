@@ -33,5 +33,5 @@ object GithubPackageRepository {
 
     private val env = System.getenv()
     val username: String = env.getOrDefault("GHR_USER", "")
-    val password: String = env.getOrDefault("GHR_PASSWORD", "")
+    val password: String = env.getOrDefault("GHR_PWD", "")
 }
