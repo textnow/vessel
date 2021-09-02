@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- [VSL-2](https://github.com/textnow/vessel/issues/2) Upgrade Kotlin version from 1.3.72 ➞ 1.5.21
+- [VSL-5](https://github.com/textnow/vessel/issues/5) Upgrade Android Gradle plugin version from 3.6.4 ➞ 7.0.1
+- [VSL-6](https://github.com/textnow/vessel/issues/6) To match that, upgraded Gradle from 5.6.4 ➞ 7.0.2
+- This in turn required changing our JDK version from 8 ➞ 11
+- Upgrade the build tools from 30.0.2 ➞ 30.0.3
+- Upgrade Room from 2.2.5 ➞ 2.3.0 to be compatible with the Kotlin upgrade
+
+### Fixed
+
+- Previously the published dependencies (pom.xml) mapped `implementation` ➞ `compile` and `api` ➞ `runtime`. That has now been corrected to `implementation` ➞ `runtime` and `api` ➞ `compile`. 
+
 ## [0.1.0] - 2020-10-16
 
 ### Added
