@@ -33,7 +33,7 @@ object Versions {
     const val lifecycle = "2.3.1"
     const val gson = "2.8.6"
     const val junit = "4.1.13"
-    const val koin = "3.1.2"
+    const val koin = "2.1.6"
     const val androidXTest = "1.3.0"
     const val androidXJunit = "1.1.2"
     const val androidXCoreTest = "2.1.0"
