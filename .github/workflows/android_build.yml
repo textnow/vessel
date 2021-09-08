@@ -12,7 +12,7 @@ jobs:
           java-version: 11
 
       - name: Run Tests
-        run: ./gradlew test jacocoTestReportDebug
+        run: ./gradlew test jacocoTestReportDebug --stacktrace
 
       - name: Archive Reports
         if: always()
