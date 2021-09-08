@@ -51,6 +51,6 @@ junitJacoco {
         "**/LoggingKt.*",
         "jdk.internal.*"
     )
-    includeNoLocationClasses = true
+    includeNoLocationClasses = false
     includeInstrumentationCoverageInMergedReport = true
 }
