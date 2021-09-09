@@ -88,8 +88,8 @@ dependencies {
     testImplementation("androidx.test.ext:junit:${Versions.androidXJunit}")
     testImplementation("androidx.arch.core:core-testing:${Versions.androidXCoreTest}")
 
-    testImplementation("org.koin:koin-test:${Versions.koin}")
-    testImplementation("org.koin:koin-android:${Versions.koin}")
+    testImplementation("io.insert-koin:koin-test:${Versions.koin}")
+    testImplementation("io.insert-koin:koin-android:${Versions.koin}")
 
     testImplementation("junit:junit:${Versions.junit}")
     testImplementation("org.robolectric:robolectric:${Versions.robolectric}")
