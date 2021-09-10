@@ -48,8 +48,9 @@ junitJacoco {
         "**/*\$inlined\$*.*",
         // Doesn't make sense to test these
         "**/NoOp*.*",
-        "**/LoggingKt.*"
+        "**/LoggingKt.*",
+        "jdk.internal.*"
     )
-    includeNoLocationClasses = true
+    includeNoLocationClasses = false
     includeInstrumentationCoverageInMergedReport = true
 }

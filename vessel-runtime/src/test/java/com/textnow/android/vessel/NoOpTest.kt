@@ -33,8 +33,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.dsl.module
 import org.koin.test.KoinTestRule
 
@@ -57,7 +57,6 @@ class NoOpTest {
         koin.loadModules(listOf(module {
             single<Vessel> { vesselMock }
         }))
-        koin.createRootScope()
     }
 
     @Test

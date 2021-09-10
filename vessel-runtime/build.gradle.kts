@@ -7,22 +7,18 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
-    buildToolsVersion = "30.0.2"
+    compileSdk = 31
+    buildToolsVersion = "31.0.0"
 
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
-        versionCode = AppVersions.code
-        versionName = AppVersions.name
-        setProperty("archivesBaseName", "${project.name}-$versionName")
-
+        minSdk = 21
+        targetSdk = 30
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = mapOf(
+                arguments += mapOf(
                     "room.schemaLocation" to "$projectDir/schemas",
                     "room.incremental" to "true",
                     "room.expandProjection" to "true"
@@ -32,10 +28,6 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
-            versionNameSuffix = ".${AppVersions.pr}-SNAPSHOT"
-        }
-
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -43,12 +35,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     afterEvaluate {
@@ -96,8 +88,10 @@ dependencies {
     testImplementation("androidx.test.ext:junit:${Versions.androidXJunit}")
     testImplementation("androidx.arch.core:core-testing:${Versions.androidXCoreTest}")
 
-    testImplementation("org.koin:koin-test:${Versions.koin}")
-    testImplementation("org.koin:koin-android:${Versions.koin}")
+    testImplementation("io.insert-koin:koin-test:${Versions.koin}")
+    testImplementation("io.insert-koin:koin-core:${Versions.koin}")
+    testImplementation("io.insert-koin:koin-android:${Versions.koin}")
+    testImplementation("io.insert-koin:koin-test-junit4:${Versions.koin}")
 
     testImplementation("junit:junit:${Versions.junit}")
     testImplementation("org.robolectric:robolectric:${Versions.robolectric}")
@@ -146,10 +140,10 @@ afterEvaluate {
                 create<MavenPublication>(variant.name) {
                     groupId = VesselGroupId
                     artifactId = project.name
-                    variant.buildType.versionNameSuffix?.let {
-                        version = "${variant.mergedFlavor.versionName}$it"
-                    } ?: let {
-                        version = variant.mergedFlavor.versionName
+                    version = if (variant.buildType.isDebuggable) {
+                        "${AppVersions.name}.${AppVersions.pr}-SNAPSHOT"
+                    } else {
+                        AppVersions.name
                     }
 
                     artifact(tasks["bundle${variant.name.capitalize()}Aar"])
@@ -173,10 +167,10 @@ afterEvaluate {
                                         .filterNot { it.name == "unspecified" }
                                         .forEach { it.write(scope) }
 
-                                configurations["${variant.name}Implementation"].writeScope("compile")
-                                configurations["${variant.name}Api"].writeScope("runtime")
-                                configurations["implementation"].writeScope("compile")
-                                configurations["api"].writeScope("runtime")
+                                configurations["${variant.name}Implementation"].writeScope("runtime")
+                                configurations["${variant.name}Api"].writeScope("compile")
+                                configurations["implementation"].writeScope("runtime")
+                                configurations["api"].writeScope("compile")
                             }
                         }
                     }
@@ -185,10 +179,3 @@ afterEvaluate {
         }
     }
 }
-
-/**
- * Workaround until [VSL-5] is done.
- * https://issuetracker.google.com/issues/78547461
- */
-fun com.android.build.gradle.internal.dsl.TestOptions.UnitTestOptions.all(block: Test.() -> Unit) =
-    all(KotlinClosure1<Any, Test>({ (this as Test).apply(block) }, owner = this))
