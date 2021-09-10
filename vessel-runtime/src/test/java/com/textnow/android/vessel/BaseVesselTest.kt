@@ -52,7 +52,6 @@ abstract class BaseVesselTest : KoinTest {
          */
         //modules(testModule)
         koin.loadModules(listOf(testModule))
-        koin.createRootScope()
     }
     @After
     fun tearDown() {

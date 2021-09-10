@@ -89,7 +89,15 @@ dependencies {
     testImplementation("androidx.arch.core:core-testing:${Versions.androidXCoreTest}")
 
     testImplementation("io.insert-koin:koin-test:${Versions.koin}")
+    testImplementation("io.insert-koin:koin-core:${Versions.koin}")
     testImplementation("io.insert-koin:koin-android:${Versions.koin}")
+//    testImplementation("io.insert-koin:koin-test-junit4:${Versions.koin}")
+//    // Koin Java Compatibility
+//    testImplementation("io.insert-koin:koin-android-compat:${Versions.koin}")
+//// Koin for Jetpack WorkManager
+//    testImplementation("io.insert-koin:koin-androidx-workmanager:${Versions.koin}")
+//// Koin for Jetpack Compose
+//    testImplementation("io.insert-koin:koin-androidx-compose:${Versions.koin}")
 
     testImplementation("junit:junit:${Versions.junit}")
     testImplementation("org.robolectric:robolectric:${Versions.robolectric}")
