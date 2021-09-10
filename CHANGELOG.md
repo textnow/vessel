@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade Room from 2.2.5 ➞ 2.4.0-alpha04 to be compatible with the Kotlin upgrade (2.3.0 failed to compile)
 - Upgrade jacoco from 0.8.6 ➞ 0.8.7
 - Upgrade Koin from 2.1.6 ➞ 3.1.2
+- Updated build tools from 30.0.2 ➞ 31.0.0
+- Updated compile SDK from 30 ➞ 31
 
 ### Fixed
 
