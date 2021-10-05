@@ -161,6 +161,8 @@ data class SimpleData(
 )
 ```
 
+When defining your own data classes to be stored in Vessel, consideration should be given to excluding them from ProGuard or other code obfuscation and shrinkage tools that your project uses. Because we use the canonical name of data classes as database keys, there is a risk that obfuscation tools could change the compiled class name and render existing data unretrievable during runtime.
+
 #### Blocking Accessors
 
 The blocking accessors are useful if you are calling from Java or non-coroutine Kotlin code.
