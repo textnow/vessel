@@ -38,10 +38,6 @@ If those limitations do not apply to you, we encourage you to use the Jetpack so
 
 If, on the other hand, our API provides the flexibility you need - welcome aboard.
 
-### ProGuard and code obfuscation
-
-Consideration should be given to excluding the data classes stored in Vessel from ProGuard or other code obfuscation and shrinkage tools. Because we use the canonical name of data classes as database keys, there is a risk that obfuscation tools could change the compiled class name and render existing data unretrievable during runtime.
-
 
 ## Usage
 
@@ -164,6 +160,8 @@ data class SimpleData(
     val number: Int?
 )
 ```
+
+When defining your own data classes to be stored in Vessel, consideration should be given to excluding them from ProGuard or other code obfuscation and shrinkage tools that your project uses. Because we use the canonical name of data classes as database keys, there is a risk that obfuscation tools could change the compiled class name and render existing data unretrievable during runtime.
 
 #### Blocking Accessors
 
