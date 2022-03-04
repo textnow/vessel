@@ -126,9 +126,9 @@ abstract class VesselDao {
      * @param new entity to add
      */
     @Transaction
-    open suspend fun replace(old: VesselEntity, new: VesselEntity) {
+    open suspend fun replace(oldType: String, new: VesselEntity) {
         set(new)
-        delete(old.type)
+        delete(oldType)
     }
 
     // endregion

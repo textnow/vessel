@@ -46,6 +46,7 @@ class NoOpVessel : Vessel {
     override suspend fun <T : Any> set(value: T) { /* no-op */ }
     override suspend fun <T : Any> delete(type: KClass<T>) { /* no-op */ }
     override suspend fun <OLD : Any, NEW : Any> replace(old: OLD, new: NEW) { /* no-op */ }
+    override suspend fun <OLD : Any, NEW : Any> replace(oldType: KClass<OLD>, new: NEW) { /* no-op */ }
     override fun clear() { /* no-op */ }
     override fun <T : Any> flow(type: KClass<T>): Flow<T?> = emptyFlow()
     override fun <T : Any> livedata(type: KClass<T>): LiveData<T?> = liveData {  }
