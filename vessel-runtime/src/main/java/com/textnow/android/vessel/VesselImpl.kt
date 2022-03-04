@@ -263,8 +263,8 @@ class VesselImpl(
      * @param new data model to add
      */
     @Deprecated(
-        message = "replacing by passing in objects will be removed in a future version in favour of using class types",
-        replaceWith = ReplaceWith("replace(old::class, new::class)"),
+        message = "replacing by passing in an object will be removed in a future version in favour of using class type",
+        replaceWith = ReplaceWith("replace(oldType = old::class, new = new)"),
     )
     override suspend fun <OLD : Any, NEW : Any> replace(old: OLD, new: NEW) {
         replace(old::class, new)
