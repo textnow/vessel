@@ -122,7 +122,7 @@ abstract class VesselDao {
     /**
      * Replace an old entity with a new entity inside a single suspending transaction.
      *
-     * @param old entity to remove
+     * @param oldType entity to remove
      * @param new entity to add
      */
     @Transaction

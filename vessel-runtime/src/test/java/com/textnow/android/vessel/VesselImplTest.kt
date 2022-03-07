@@ -141,7 +141,7 @@ class VesselImplTest: BaseVesselTest() {
             name = firstSimple.name,
             number = firstSimple.number?.toDouble()
         )
-        vessel.replace(oldType = firstSimple::class, new = replacement)
+        vessel.replace(old = firstSimple, new = replacement)
         assertThat(vessel.get(SimpleData::class)).isNull()
         assertThat(vessel.get(SimpleDataV2::class)?.number).isEqualTo(replacement.number)
     }
