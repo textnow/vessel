@@ -23,6 +23,7 @@
  */
 package com.textnow.android.vessel.di
 
+import com.textnow.android.vessel.DefaultVesselCache
 import com.textnow.android.vessel.Vessel
 import com.textnow.android.vessel.VesselCallback
 import com.textnow.android.vessel.VesselImpl
@@ -42,7 +43,8 @@ val testModule = module {
                 onOpen = { println("Database opened") },
                 onClosed = { println("Database closed") },
                 onDestructiveMigration = { println("Destructive migration") }
-            )
+            ),
+            cache = DefaultVesselCache()
         )
     }
 }
