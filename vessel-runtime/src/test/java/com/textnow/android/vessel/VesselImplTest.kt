@@ -144,6 +144,10 @@ class VesselImplTest: BaseVesselTest() {
         vessel.replace(old = firstSimple, new = replacement)
         assertThat(vessel.get(SimpleData::class)).isNull()
         assertThat(vessel.get(SimpleDataV2::class)?.number).isEqualTo(replacement.number)
+
+        vessel.replace(oldType = replacement::class, new = firstSimple)
+        assertThat(vessel.get(SimpleDataV2::class)).isNull()
+        assertThat(vessel.get(SimpleData::class)?.number).isEqualTo(firstSimple.number)
     }
 
     fun `writing the same data type replaces the value`() = runBlocking {
