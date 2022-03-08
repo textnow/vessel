@@ -10,19 +10,19 @@ open class DefaultVesselCache : VesselCache {
         get() = hashMap.size
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun <T : Any> get(key: String): T? {
+    override fun <T : Any> get(key: String): T? {
         return hashMap[key] as? T?
     }
 
-    override suspend fun <T : Any> set(key: String, value: T) {
+    override fun <T : Any> set(key: String, value: T) {
         hashMap[key] = value
     }
 
-    override suspend fun remove(key: String) {
+    override fun remove(key: String) {
         hashMap.remove(key)
     }
 
-    override suspend fun clear() {
+    override fun clear() {
         hashMap.clear()
     }
 }
@@ -38,13 +38,13 @@ open class LRUVesselCache(
     override val size: Int
         get() = backingCache.size
 
-    override suspend fun <T : Any> get(key: String): T? {
+    override fun <T : Any> get(key: String): T? {
         return backingCache.get<T>(key)?.also {
             moveToEnd(key)
         }
     }
 
-    override suspend fun <T : Any> set(key: String, value: T) {
+    override fun <T : Any> set(key: String, value: T) {
         moveToEnd(key)
         backingCache.set(key, value)
 
@@ -54,12 +54,12 @@ open class LRUVesselCache(
         }
     }
 
-    override suspend fun remove(key: String) {
+    override fun remove(key: String) {
         evictionOrder.remove(key)
         backingCache.remove(key)
     }
 
-    override suspend fun clear() {
+    override fun clear() {
         backingCache.clear()
         evictionOrder.clear()
     }

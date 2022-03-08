@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import kotlin.reflect.KClass
 
 /**
@@ -144,12 +143,11 @@ class VesselImpl(
      */
     override fun <T : Any> getBlocking(type: KClass<T>): T? {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
-        type.qualifiedName?.let { typeName ->
-            dao.getBlocking(typeName)?.data?.let { entity ->
-                return fromJson(entity, type)
+        return type.qualifiedName?.let { typeName ->
+            cache?.get(typeName) ?: dao.getBlocking(typeName)?.data?.let { entity ->
+                fromJson(entity, type)
             }
         }
-        return null
     }
 
     /**
@@ -160,12 +158,11 @@ class VesselImpl(
      */
     override fun <T : Any> getBlocking(type: Class<T>): T? {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
-        type.kotlin.qualifiedName?.let { typeName ->
-            dao.getBlocking(typeName)?.data?.let { entity ->
-                return fromJson(entity, type.kotlin)
+        return type.kotlin.qualifiedName?.let { typeName ->
+            cache?.get(typeName) ?: dao.getBlocking(typeName)?.data?.let { entity ->
+                fromJson(entity, type.kotlin)
             }
         }
-        return null
     }
 
     /**
@@ -176,6 +173,7 @@ class VesselImpl(
     override fun <T : Any> setBlocking(value: T) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
         typeNameOf(value).let { typeName ->
+            cache?.set(typeName, value)
             dao.setBlocking(entity = VesselEntity(
                     type = typeName,
                     data = toJson(value)
@@ -191,6 +189,7 @@ class VesselImpl(
     override fun <T : Any> deleteBlocking(type: KClass<T>) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
         type.qualifiedName?.let { typeName ->
+            cache?.remove(typeName)
             dao.deleteBlocking(typeName)
         }
     }
@@ -203,6 +202,7 @@ class VesselImpl(
     override fun <T : Any> deleteBlocking(type: Class<T>) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
         type.kotlin.qualifiedName?.let { typeName ->
+            cache?.remove(typeName)
             dao.deleteBlocking(typeName)
         }
     }
@@ -219,12 +219,11 @@ class VesselImpl(
      */
     override suspend fun <T : Any> get(type: KClass<T>): T? {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
-        type.qualifiedName?.let { typeName ->
-            return cache?.get(typeName) ?: dao.get(typeName)?.data?.let { entity ->
+        return type.qualifiedName?.let { typeName ->
+            cache?.get(typeName) ?: dao.get(typeName)?.data?.let { entity ->
                 fromJson(entity, type)
             }
         }
-        return null
     }
 
     /**
@@ -271,9 +270,11 @@ class VesselImpl(
         val oldName = typeNameOf(old)
         val newName = typeNameOf(new)
         if (oldName == newName) {
-            set(new)
             cache?.set(newName, new)
+            set(new)
         } else {
+            cache?.remove(oldName)
+            cache?.set(newName, new)
             dao.replace(
                 old = VesselEntity(
                     type = oldName,
@@ -282,8 +283,6 @@ class VesselImpl(
                     type = newName,
                     data = toJson(new))
             )
-            cache?.remove(oldName)
-            cache?.set(newName, new)
         }
     }
 
@@ -292,10 +291,8 @@ class VesselImpl(
      */
     override fun clear() {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
+        cache?.clear()
         db.clearAllTables()
-        runBlocking {
-            cache?.clear()
-        }
     }
 
     // endregion
