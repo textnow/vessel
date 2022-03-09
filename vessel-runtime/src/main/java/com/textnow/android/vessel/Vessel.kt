@@ -121,7 +121,19 @@ interface Vessel {
      * @param old data model to remove
      * @param new data model to add
      */
+    @Deprecated(
+        message = "replacing by passing in an object will be removed in a future version in favour of using class type",
+        replaceWith = ReplaceWith("replace(oldType = old::class, new = new)"),
+    )
     suspend fun <OLD : Any, NEW : Any> replace(old: OLD, new: NEW)
+
+    /**
+     * Replace one data with another, in a suspending transaction.
+     *
+     * @param oldType of data model to remove
+     * @param new data model to add
+     */
+    suspend fun <OLD : Any, NEW : Any> replace(oldType: KClass<OLD>, new: NEW)
 
     /**
      * Clear the database.

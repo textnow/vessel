@@ -141,6 +141,10 @@ abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest(cache) {
         vessel.replace(old = firstSimple, new = replacement)
         assertThat(vessel.get(SimpleData::class)).isNull()
         assertThat(vessel.get(SimpleDataV2::class)?.number).isEqualTo(replacement.number)
+
+        vessel.replace(oldType = replacement::class, new = firstSimple)
+        assertThat(vessel.get(SimpleDataV2::class)).isNull()
+        assertThat(vessel.get(SimpleData::class)?.number).isEqualTo(firstSimple.number)
     }
 
     @Test
