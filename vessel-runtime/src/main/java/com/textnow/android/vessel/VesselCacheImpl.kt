@@ -40,12 +40,12 @@ open class LRUVesselCache(
 
     override fun <T : Any> get(key: String): T? {
         return backingCache.get<T>(key)?.also {
-            moveToEnd(key)
+            updateRecentlyUsed(key)
         }
     }
 
     override fun <T : Any> set(key: String, value: T) {
-        moveToEnd(key)
+        updateRecentlyUsed(key)
         backingCache.set(key, value)
 
         if (capacity > 0 && backingCache.size > capacity) {
@@ -64,7 +64,10 @@ open class LRUVesselCache(
         evictionOrder.clear()
     }
 
-    private fun moveToEnd(key: String) {
+    /**
+     * Moves [key] to the end of [evictionOrder]
+     */
+    private fun updateRecentlyUsed(key: String) {
         evictionOrder.remove(key)
         evictionOrder.addLast(key)
     }
