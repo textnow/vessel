@@ -262,21 +262,37 @@ class VesselImpl(
      * @param old data model to remove
      * @param new data model to add
      */
+    @Deprecated(
+        message = "replacing by passing in an object will be removed in a future version in favour of using class type",
+        replaceWith = ReplaceWith("replace(oldType = old::class, new = new)"),
+    )
     override suspend fun <OLD : Any, NEW : Any> replace(old: OLD, new: NEW) {
+        replace(old::class, new)
+    }
+
+    /**
+     * Replace one data with another, in a suspending transaction.
+     *
+     * @param oldType of data model to remove
+     * @param new data model to add
+     */
+    override suspend fun <OLD : Any, NEW : Any> replace(
+        oldType: KClass<OLD>,
+        new: NEW
+    ) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
-        val oldName = typeNameOf(old)
         val newName = typeNameOf(new)
-        if (oldName == newName) {
-            set(new)
-        } else {
-            dao.replace(
-                old = VesselEntity(
-                    type = oldName,
-                    data = toJson(old)),
-                new = VesselEntity(
-                    type = newName,
-                    data = toJson(new))
-            )
+        oldType.qualifiedName?.let { oldName ->
+            if (oldName == newName) {
+                set(new)
+            } else {
+                dao.replace(
+                    oldType = oldName,
+                    new = VesselEntity(
+                        type = newName,
+                        data = toJson(new))
+                )
+            }
         }
     }
 
