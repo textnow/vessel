@@ -3,6 +3,10 @@ package com.textnow.android.vessel
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 
+/**
+ * [DefaultVesselCache] has no max size and no eviction policy. Data is stored
+ * in memory until the process is killed, or [clear] is called.
+ */
 open class DefaultVesselCache : VesselCache {
     private val hashMap = ConcurrentHashMap<String, Any>()
 
@@ -27,6 +31,11 @@ open class DefaultVesselCache : VesselCache {
     }
 }
 
+/**
+ * [LRUVesselCache] has a max size of [capacity]. Adding a new key when the cache is full
+ * results in the least recently used key to be evicted. Data is stored
+ * in memory until the process is killed, or [clear] is called.
+ */
 open class LRUVesselCache(
     private val capacity: Int
 ) : VesselCache {
