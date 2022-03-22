@@ -48,7 +48,7 @@ import kotlin.reflect.KClass
  * @param inMemory true if the database should be in-memory only [Default: false]
  * @param allowMainThread to allow calls to be made on the main thread. [Default: false]
  * @param callback for notifications of database state changes
- * @param cache Optional [VesselCache]. Built-ins: [DefaultVesselCache] and [LRUVesselCache] [Default: null]
+ * @param cache Optional [VesselCache]. Built-ins: [DefaultCache] and [LruCache] [Default: null]
  */
 class VesselImpl(
         private val appContext: Context,

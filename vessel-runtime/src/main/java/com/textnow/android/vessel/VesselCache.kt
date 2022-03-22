@@ -2,7 +2,7 @@ package com.textnow.android.vessel
 
 interface VesselCache {
     /**
-     * Get the current size of the cache
+     * The number of items currently in the cache
      */
     val size: Int
 

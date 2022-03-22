@@ -33,8 +33,6 @@ import com.textnow.android.vessel.model.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.junit.runners.Parameterized
 import org.robolectric.annotation.Config
 
 /**
@@ -180,4 +178,4 @@ class VesselImplTestNoCache : VesselImplTest(null)
     manifest = Config.NONE
 )
 @RunWith(AndroidJUnit4::class)
-class VesselImplTestCached : VesselImplTest(DefaultVesselCache())
+class VesselImplTestCached : VesselImplTest(DefaultCache())

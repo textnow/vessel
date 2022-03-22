@@ -4,10 +4,10 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 
 /**
- * [DefaultVesselCache] has no max size and no eviction policy. Data is stored
+ * [DefaultCache] has no max size and no eviction policy. Data is stored
  * in memory until the process is killed, or [clear] is called.
  */
-open class DefaultVesselCache : VesselCache {
+open class DefaultCache : VesselCache {
     private val hashMap = ConcurrentHashMap<String, Any>()
 
     override val size: Int
@@ -32,14 +32,14 @@ open class DefaultVesselCache : VesselCache {
 }
 
 /**
- * [LRUVesselCache] has a max size of [capacity]. Adding a new key when the cache is full
+ * [LruCache] has a max size of [capacity]. Adding a new key when the cache is full
  * results in the least recently used key to be evicted. Data is stored
  * in memory until the process is killed, or [clear] is called.
  */
-open class LRUVesselCache(
+open class LruCache(
     private val capacity: Int
 ) : VesselCache {
-    private val backingCache: VesselCache = DefaultVesselCache()
+    private val backingCache: VesselCache = DefaultCache()
 
     // front is the LRU key; end is the most recent used key
     private val evictionOrder = ConcurrentLinkedDeque<String>()

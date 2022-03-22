@@ -89,21 +89,21 @@ abstract class BaseVesselCacheTest<T : VesselCache> {
 }
 
 @RunWith(JUnit4::class)
-class DefaultVesselCacheTest : BaseVesselCacheTest<DefaultVesselCache>() {
-    override fun getInstance(): DefaultVesselCache {
-        return DefaultVesselCache()
+class DefaultCacheTest : BaseVesselCacheTest<DefaultCache>() {
+    override fun getInstance(): DefaultCache {
+        return DefaultCache()
     }
 }
 
 @RunWith(JUnit4::class)
-class LRUVesselCacheTest : BaseVesselCacheTest<LRUVesselCache>() {
-    override fun getInstance(): LRUVesselCache {
-        return LRUVesselCache(100)
+class LruCacheTest : BaseVesselCacheTest<LruCache>() {
+    override fun getInstance(): LruCache {
+        return LruCache(100)
     }
 
     @Test
     fun `evicts LRU key when cache reaches capacity`() {
-        val lruCache = LRUVesselCache(3)
+        val lruCache = LruCache(3)
         lruCache.set("key", 1)
         lruCache.set("key2", 2)
         lruCache.set("key3", 3)
