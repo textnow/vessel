@@ -38,14 +38,9 @@ import org.robolectric.annotation.Config
 /**
  * Validate functionality of the Vessel implementation.
  * These tests will rely on the in-memory room database so we can verify proper serialization.
+ * Tests Vessel with caching and non-caching functionality
  */
-@RunWith(AndroidJUnit4::class)
-@Config(
-    sdk = [Build.VERSION_CODES.P],
-    manifest = Config.NONE
-)
-class VesselImplTest: BaseVesselTest() {
-
+abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest(cache) {
     @Test
     fun `reasonable names are chosen for data`() {
         assertThat(vessel.typeNameOf(firstSimple)).isEqualTo("com.textnow.android.vessel.model.SimpleData")
@@ -150,6 +145,7 @@ class VesselImplTest: BaseVesselTest() {
         assertThat(vessel.get(SimpleData::class)?.number).isEqualTo(firstSimple.number)
     }
 
+    @Test
     fun `writing the same data type replaces the value`() = runBlocking {
         vessel.set(firstSimple)
         vessel.set(secondSimple)
@@ -167,3 +163,19 @@ class VesselImplTest: BaseVesselTest() {
         assertThat(vessel.get(NestedData::class)).isNull()
     }
 }
+
+// Workaround for parameterized tests
+
+@Config(
+    sdk = [Build.VERSION_CODES.P],
+    manifest = Config.NONE
+)
+@RunWith(AndroidJUnit4::class)
+class VesselImplTestNoCache : VesselImplTest(null)
+
+@Config(
+    sdk = [Build.VERSION_CODES.P],
+    manifest = Config.NONE
+)
+@RunWith(AndroidJUnit4::class)
+class VesselImplTestCached : VesselImplTest(DefaultCache())

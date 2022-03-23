@@ -118,7 +118,8 @@ val vessel = VesselImpl(
         onOpen = { Log.d(TAG, "Database opened") },
         onClosed = { Log.d(TAG, "Database closed") },
         onDestructiveMigration = { Log.d(TAG, "Destructive migration") }
-    )
+    ),
+    cache = DefaultCache()
 )
 ```
 
@@ -129,6 +130,8 @@ val vessel = VesselImpl(
 | inMemory | When false (default) it will use a SQL database.  When true (for example, in tests) it will use an in-memory database |
 | allowMainThread | If you have legacy code that temporarily needs to make calls from the main thread, this can be your friend |
 | callback | A callback for database state changes |
+| cache | When null (default), no caching is used. Otherwise, you can specify an implementation of `VesselCache` to enable caching: `DefaultCache` and `LruCache` are included |
+
 
 Let's look at the callback a little closer.
 
@@ -140,6 +143,14 @@ Let's look at the callback a little closer.
 | onDestructiveMigration | Called when the database has been migrated destructively | 
 
 In the above example, we are simply calling `Log.d` from the callbacks. If you are calling it from Robolectric, you might consider using `println` instead.
+
+
+Vessel also comes with the ability to add an in-memory cache to speed up retrieval. You can provide your own implementation of `VesselCache`, or you can use the built-in caches included with Vessel.
+
+| Cache | Description |
+| :--- | :--- |
+| DefaultCache | There is no eviction policy and all objects are retained until the app process is killed |
+| LruCache | There is a maximum capacity (# of objects) and the Least Recently Used key is evicted when full |
 
 ### API
 

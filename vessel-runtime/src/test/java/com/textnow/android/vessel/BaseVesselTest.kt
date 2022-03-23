@@ -27,9 +27,13 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.textnow.android.vessel.di.testModule
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.Koin
+import org.koin.core.context.stopKoin
+import org.koin.core.parameter.parametersOf
+import org.koin.test.AutoCloseKoinTest
 import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.inject
@@ -38,8 +42,8 @@ import org.koin.test.inject
  * Base test class to handle starting and stopping Koin,
  * setting up the test module dependency and closing the db.
  */
-abstract class BaseVesselTest : KoinTest {
-    val vessel: Vessel by inject()
+abstract class BaseVesselTest(cache: VesselCache? = null) : KoinTest {
+    val vessel: Vessel by inject { parametersOf(cache) }
 
     @get:Rule
     val koinTestRule = KoinTestRule.create {

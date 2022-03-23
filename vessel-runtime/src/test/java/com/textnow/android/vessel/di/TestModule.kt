@@ -23,9 +23,7 @@
  */
 package com.textnow.android.vessel.di
 
-import com.textnow.android.vessel.Vessel
-import com.textnow.android.vessel.VesselCallback
-import com.textnow.android.vessel.VesselImpl
+import com.textnow.android.vessel.*
 import org.koin.dsl.module
 
 /**
@@ -33,7 +31,7 @@ import org.koin.dsl.module
  */
 val testModule = module {
     single<Vessel> {
-        VesselImpl(
+        (cache: VesselCache?) -> VesselImpl(
             appContext = get(),
             inMemory = true,
             allowMainThread = true,
@@ -42,7 +40,8 @@ val testModule = module {
                 onOpen = { println("Database opened") },
                 onClosed = { println("Database closed") },
                 onDestructiveMigration = { println("Destructive migration") }
-            )
+            ),
+            cache = cache
         )
     }
 }

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [VSL-25](https://github.com/textnow/vessel/issues/25) Added new `replace` method overload to support passing in the old data model class type
+- [VSL-3](https://github.com/textnow/vessel/issues/3) Added the ability to enable caching for Vessel
 
 ### Deprecated
 
