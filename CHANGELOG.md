@@ -7,14 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2022-03-23
+
 ### Added
 
-- [VSL-25](https://github.com/textnow/vessel/issues/25) Added new `replace` method overload to support passing in the old data model class type
-- [VSL-3](https://github.com/textnow/vessel/issues/3) Added the ability to enable caching for Vessel
+-   [VSL-25](https://github.com/textnow/vessel/issues/25) Added new `replace` method overload to support passing in the old data model class type
+-   [VSL-3](https://github.com/textnow/vessel/issues/3) Added the ability to enable caching for Vessel
 
 ### Deprecated
 
-- [VSL-25](https://github.com/textnow/vessel/issues/25) Deprecated `replace` method overload that required the old data model object to be passed in
+-   [VSL-25](https://github.com/textnow/vessel/issues/25) Deprecated `replace` method overload that required the old data model object to be passed in
 
 ## [0.1.1] - 2021-09-10
 
@@ -51,7 +53,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-[Unreleased]: https://github.com/textnow/vessel/compare/0.1.1...HEAD
+[Unreleased]: https://github.com/textnow/vessel/compare/0.1.2...HEAD
+
+[0.1.2]: https://github.com/textnow/vessel/compare/0.1.1...0.1.2
 
 [0.1.1]: https://github.com/textnow/vessel/compare/0.1.0...0.1.1
 
