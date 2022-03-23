@@ -118,7 +118,8 @@ val vessel = VesselImpl(
         onOpen = { Log.d(TAG, "Database opened") },
         onClosed = { Log.d(TAG, "Database closed") },
         onDestructiveMigration = { Log.d(TAG, "Destructive migration") }
-    )
+    ),
+    cache = DefaultCache()
 )
 ```
 
@@ -129,6 +130,7 @@ val vessel = VesselImpl(
 | inMemory | When false (default) it will use a SQL database.  When true (for example, in tests) it will use an in-memory database |
 | allowMainThread | If you have legacy code that temporarily needs to make calls from the main thread, this can be your friend |
 | callback | A callback for database state changes |
+| cache | When null (default), no caching is used. Otherwise, you can specify an implementation of `VesselCache` to enable caching: `DefaultCache` or `LruCache` |
 
 Let's look at the callback a little closer.
 
