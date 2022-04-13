@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.MainFragment">
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/userPieChart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/layout_margin_huge"
+        app:layout_constraintBottom_toTopOf="@+id/flow"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/message"
+        />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="128dp"
+            android:background="@color/md_grey_300" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <TextView
+        android:id="@+id/message"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/layout_margin_large"
+        android:layout_marginTop="@dimen/layout_margin_medium"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_large"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Welcome, Test Name!"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/layout_margin_very_huge"
+        app:constraint_referenced_ids="food_icon,rest_icon,run_icon,bike_icon"
+        app:layout_constraintBottom_toTopOf="@+id/friends_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/food_icon"
+        android:layout_width="@dimen/main_icon_size"
+        android:layout_height="@dimen/main_icon_size"
+        android:contentDescription="@string/eating"
+        android:src="@drawable/ic_food_btn" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin_very_small"
+        android:text="@string/eating"
+        app:layout_constraintEnd_toEndOf="@+id/food_icon"
+        app:layout_constraintStart_toStartOf="@+id/food_icon"
+        app:layout_constraintTop_toBottomOf="@+id/food_icon" />
+
+    <ImageView
+        android:id="@+id/rest_icon"
+        android:layout_width="@dimen/main_icon_size"
+        android:layout_height="@dimen/main_icon_size"
+        android:contentDescription="@string/sleeping"
+        android:src="@drawable/ic_rest_btn" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin_very_small"
+        android:text="@string/sleeping"
+        app:layout_constraintEnd_toEndOf="@+id/rest_icon"
+        app:layout_constraintStart_toStartOf="@+id/rest_icon"
+        app:layout_constraintTop_toBottomOf="@+id/rest_icon" />
+
+    <ImageView
+        android:id="@+id/run_icon"
+        android:layout_width="@dimen/main_icon_size"
+        android:layout_height="@dimen/main_icon_size"
+        android:contentDescription="@string/running"
+        android:src="@drawable/ic_run_btn" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin_very_small"
+        android:text="@string/running"
+        app:layout_constraintEnd_toEndOf="@+id/run_icon"
+        app:layout_constraintStart_toStartOf="@+id/run_icon"
+        app:layout_constraintTop_toBottomOf="@+id/run_icon" />
+
+    <ImageView
+        android:id="@+id/bike_icon"
+        android:layout_width="@dimen/main_icon_size"
+        android:layout_height="@dimen/main_icon_size"
+        android:contentDescription="@string/biking"
+        android:src="@drawable/ic_bike_btn" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/layout_margin_very_small"
+        android:text="@string/biking"
+        app:layout_constraintEnd_toEndOf="@+id/bike_icon"
+        app:layout_constraintStart_toStartOf="@+id/bike_icon"
+        app:layout_constraintTop_toBottomOf="@+id/bike_icon" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/friends_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/layout_margin_medium"
+        android:text="@string/friends_btn_text"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/logout_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/logout"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="@+id/friends_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/friends_button"
+        app:layout_constraintTop_toTopOf="@+id/friends_button"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
