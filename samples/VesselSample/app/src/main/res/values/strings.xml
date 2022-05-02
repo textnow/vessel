@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">VesselSampleApp</string>
+    <string name="get_user_failure_msg">User not found</string>
+    <string name="user_message_greeting">Welcome, %1$s!</string>
+    <string name="login_unknown_error_msg">Error occurred while logging in!</string>
+    <string name="loading">Loading…</string>
+    <string name="enter_id_hint">Enter an ID (1 – 10)</string>
+    <string name="password_hint">Password</string>
+    <string name="login_btn_text">Login</string>
+    <string name="welcome_msg">Welcome!</string>
+    <string name="friends_btn_text">Friends</string>
+    <string name="logout">Logout</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_id">Not a valid ID</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="eating">Eating</string>
+    <string name="running">Running</string>
+    <string name="biking">Biking</string>
+    <string name="sleeping">Sleeping</string>
+    <string name="recent_activity">Recent Activity</string>
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.vesselsample.ui.main.MainFragment"
+        android:label=""
+        tools:layout="@layout/main_fragment">
+        <action
+            android:id="@+id/action_mainFragment_to_friendsFragment"
+            app:destination="@id/friendsFragment" />
+    </fragment>
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.vesselsample.ui.auth.LoginActivity"
+        tools:layout="@layout/login_activity" />
+    <fragment
+        android:id="@+id/friendsFragment"
+        android:name="com.example.vesselsample.ui.friends.FriendsFragment"
+        android:label="Friends"
+        tools:layout="@layout/friends_fragment">
+        <action
+            android:id="@+id/action_friendsFragment_to_friendDetailFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:label=""
+        android:name="com.example.vesselsample.ui.profile.ProfileFragment"
+        tools:layout="@layout/profile_fragment">
+
+        <argument
+            android:name="userId"
+            app:argType="string"
+        />
+
+    </fragment>
+</navigation>
