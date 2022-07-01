@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- [VSL-24](https://github.com/textnow/vessel/issues/24) Change code coverage engine to Kover + IntelliJ
+
+### Removed
+
+- Remove `manifest =` lines from Robolectric `@Config` as per http://robolectric.org/migrating/#migrating-to-40
+- Remove `@ExperimentalCoroutinesApi` from `flow` accessor due to IDE recommendation
+
 ## [0.1.2] - 2022-03-23
 
 ### Added

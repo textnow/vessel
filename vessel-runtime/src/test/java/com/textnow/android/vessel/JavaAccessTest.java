@@ -45,10 +45,7 @@ import static org.junit.Assert.assertNull;
  * This subset of tests only validates the Java-specific accessors.
  */
 @RunWith(AndroidJUnit4.class)
-@Config(
-        sdk = Build.VERSION_CODES.P,
-        manifest = Config.NONE
-)
+@Config(sdk = Build.VERSION_CODES.P)
 public class JavaAccessTest extends BaseVesselTest {
 
     public JavaAccessTest() {

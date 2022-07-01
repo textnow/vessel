@@ -58,9 +58,12 @@ android {
 
     testOptions {
         unitTests.apply {
-            // https://github.com/robolectric/robolectric/issues/5456
-            isIncludeAndroidResources = false
+            isIncludeAndroidResources = true
             isReturnDefaultValues = true
+            all {
+                it.systemProperty("robolectric.logging.enabled", "true")
+                it.jvmArgs("-noverify")
+            }
         }
     }
 }

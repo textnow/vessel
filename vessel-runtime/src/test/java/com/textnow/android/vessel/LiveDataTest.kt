@@ -49,10 +49,7 @@ import org.robolectric.annotation.Config
  * tested separately.
  */
 @RunWith(AndroidJUnit4::class)
-@Config(
-    sdk = [Build.VERSION_CODES.P],
-    manifest = Config.NONE
-)
+@Config(sdk = [Build.VERSION_CODES.P])
 class LiveDataTest : BaseVesselTest() {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()

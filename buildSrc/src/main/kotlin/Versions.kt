@@ -27,6 +27,8 @@ object Versions {
     const val vannikJacoco = "0.16.0"
     const val jacoco = "0.8.7"
     const val dokka = "1.4.10"
+    const val kover = "0.5.0"
+    const val intellijCover = "1.0.656"
 
     const val coroutine = "1.5.1"
     const val room = "2.4.0-alpha04"

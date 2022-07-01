@@ -324,7 +324,6 @@ class VesselImpl(
      * @param type of data class to lookup
      * @return flow of the values associated with that type
      */
-    @ExperimentalCoroutinesApi
     override fun <T : Any> flow(type: KClass<T>): Flow<T?> {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
         type.qualifiedName?.let { typeName ->
