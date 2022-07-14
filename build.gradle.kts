@@ -13,7 +13,6 @@ buildscript {
 }
 
 plugins {
-    id("com.vanniktech.android.junit.jacoco") version Versions.vannikJacoco
     id("org.jetbrains.dokka") version Versions.dokka
     id("org.jetbrains.kotlinx.kover") version Versions.kover
 }
@@ -30,7 +29,6 @@ kover {
     isDisabled = false                                   // true to disable instrumentation of all test tasks in all projects
     coverageEngine.set(kotlinx.kover.api.CoverageEngine.INTELLIJ) // change instrumentation agent and reporter
     intellijEngineVersion.set(Versions.intellijCover)    // change version of IntelliJ agent and reporter
-    jacocoEngineVersion.set(Versions.jacoco)             // change version of JaCoCo agent and reporter
     generateReportOnCheck = true                         // false to do not execute `koverMergedReport` task before `check` task
     disabledProjects = setOf()                           // setOf("project-name") or setOf(":project-name") to disable coverage for project with path `:project-name` (`:` for the root project)
     instrumentAndroidPackage = false                     // true to instrument packages `android.*` and `com.android.*`
@@ -48,21 +46,3 @@ tasks {
     }
 }
 
-junitJacoco {
-    jacocoVersion = Versions.jacoco
-    excludes = listOf(
-        // Auto-generated code
-        "**/BuildConfig.*",
-        "**/*_Impl.*",
-        "**/*_Impl\$*.*",
-        // Jacoco can't handle these
-        "**/*\$Lambda\$*.*",
-        "**/*\$inlined\$*.*",
-        // Doesn't make sense to test these
-        "**/NoOp*.*",
-        "**/LoggingKt.*",
-        "jdk.internal.*"
-    )
-    includeNoLocationClasses = false
-    includeInstrumentationCoverageInMergedReport = true
-}
