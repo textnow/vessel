@@ -166,16 +166,10 @@ abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest(cache) {
 
 // Workaround for parameterized tests
 
-@Config(
-    sdk = [Build.VERSION_CODES.P],
-    manifest = Config.NONE
-)
+@Config(sdk = [Build.VERSION_CODES.P])
 @RunWith(AndroidJUnit4::class)
 class VesselImplTestNoCache : VesselImplTest(null)
 
-@Config(
-    sdk = [Build.VERSION_CODES.P],
-    manifest = Config.NONE
-)
+@Config(sdk = [Build.VERSION_CODES.P])
 @RunWith(AndroidJUnit4::class)
 class VesselImplTestCached : VesselImplTest(DefaultCache())

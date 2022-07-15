@@ -67,7 +67,7 @@ jobs:
           java-version: 11
 
       - name: Run Tests
-        run: ./gradlew test jacocoTestReportDebug
+        run: ./gradlew koverMergedReport
 
       - name: Update Coverage Badge
         run: .github/scripts/generateCoverageBadge.sh
@@ -83,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: 'reports'
-          path: vessel-runtime/build/reports/
+          path: build/reports/
 
   # Assemble debug and release, just as an extra validation step
   assemble:

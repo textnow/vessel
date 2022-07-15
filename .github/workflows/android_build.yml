@@ -12,14 +12,14 @@ jobs:
           java-version: 11
 
       - name: Run Tests
-        run: ./gradlew test jacocoTestReportDebug --stacktrace
+        run: ./gradlew koverMergedReport --stacktrace
 
       - name: Archive Reports
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: 'reports'
-          path: vessel-runtime/build/reports/
+          path: build/reports/
 
       - name: Assemble
         run: ./gradlew assemble

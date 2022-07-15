@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-REPORT=vessel-runtime/build/reports/jacoco/debug/jacoco.xml
+REPORT=build/reports/kover/report.xml
 if [ ! -f $REPORT ]; then
-  echo "$REPORT not found. Did you run 'jacocoTestReportDebug' first?"
+  echo "$REPORT not found. Did you run 'koverMergedReport' first?"
   exit 2
 fi
 
