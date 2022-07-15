@@ -7,14 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2022-07-15
+
 ### Changed
 
-- [VSL-24](https://github.com/textnow/vessel/issues/24) Change code coverage engine to Kover + IntelliJ
+-   [VSL-24](https://github.com/textnow/vessel/issues/24) Change code coverage engine to Kover + IntelliJ
 
 ### Removed
 
-- Remove `manifest =` lines from Robolectric `@Config` as per http://robolectric.org/migrating/#migrating-to-40
-- Remove `@ExperimentalCoroutinesApi` from `flow` accessor due to IDE recommendation
+-   Remove `manifest =` lines from Robolectric `@Config` as per <http://robolectric.org/migrating/#migrating-to-40>
+-   Remove `@ExperimentalCoroutinesApi` from `flow` accessor due to IDE recommendation
 
 ## [0.1.2] - 2022-03-23
 
@@ -62,7 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-[Unreleased]: https://github.com/textnow/vessel/compare/0.1.2...HEAD
+[Unreleased]: https://github.com/textnow/vessel/compare/0.1.3...HEAD
+
+[0.1.3]: https://github.com/textnow/vessel/compare/0.1.2...0.1.3
 
 [0.1.2]: https://github.com/textnow/vessel/compare/0.1.1...0.1.2
 
