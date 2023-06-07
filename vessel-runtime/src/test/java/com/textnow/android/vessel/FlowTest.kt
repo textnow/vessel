@@ -53,7 +53,7 @@ import org.robolectric.annotation.Config
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [Build.VERSION_CODES.P])
-class FlowTest : BaseVesselTest() {
+class FlowTest : BaseVesselTest<DefaultCache>() {
     private val dispatcher = TestCoroutineDispatcher()
     private val scope = TestCoroutineScope(dispatcher)
 

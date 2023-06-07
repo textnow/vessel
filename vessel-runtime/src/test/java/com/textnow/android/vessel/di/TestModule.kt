@@ -31,7 +31,7 @@ import org.koin.dsl.module
  */
 val testModule = module {
     single<Vessel> {
-        (cache: VesselCache?) -> VesselImpl(
+        (cache: VesselCache?, profile: Boolean?) -> VesselImpl(
             appContext = get(),
             inMemory = true,
             allowMainThread = true,
@@ -41,7 +41,8 @@ val testModule = module {
                 onClosed = { println("Database closed") },
                 onDestructiveMigration = { println("Destructive migration") }
             ),
-            cache = cache
+            cache = cache,
+            profile = profile ?: false
         )
     }
 }

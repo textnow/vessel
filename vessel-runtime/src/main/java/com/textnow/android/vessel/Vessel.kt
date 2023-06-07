@@ -44,6 +44,38 @@ interface Vessel {
     @VisibleForTesting
     fun close()
 
+    /**
+     * Read the entire database into the cache in one operation.
+     *
+     * This requires a cache.  If no cache was configured, this function does nothing.
+     *
+     * This can lead to a significant speedup in some scenarios:
+     * - When reading many keys
+     * - When writing many keys, but the values written match what is already in the database
+     *
+     * Many random reads can be slower than one larger read.  Similarly one large read is likely
+     * faster than re-writing many values.
+     */
+    suspend fun preload()
+
+    /**
+     * Blocking version of [preload].
+     */
+    fun preloadBlocking()
+
+    // endregion
+
+    // region profiling
+
+    /**
+     * Profiling data, if profiling was enabled.
+     *
+     * This can be used to understand the data access patterns and their performance implications.
+     *
+     * This can be used to inform whether [preload]ing would increase or decrease performance.
+     */
+    val profileData: ProfileData?
+
     // endregion
 
     // region blocking accessors
