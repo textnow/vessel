@@ -128,14 +128,24 @@ private fun table(
         }
     }
 
-    val pad = { colNo: Int, element: Any -> " ${element.toString().padStart(colWidths[colNo])} " }
+    fun List<Any>.toTextRow() =
+        this.mapIndexed { colNo, item -> " ${item.toString().padStart(colWidths[colNo])} " }
+            .joinToString("│")
 
-    // headings, divider row, data rows
-    return headings.mapIndexed(pad).joinToString("|") +
-            "\n" + colWidths.joinToString("|") { colWidth -> "-".repeat(colWidth + 2) } +
-            "\n" + allData.joinToString("\n") { row ->
-        row.mapIndexed(pad).joinToString("|")
+    val separatorRow = { line: String, divider: String ->
+        colWidths.joinToString(divider) { colWidth ->
+            line.repeat(colWidth + 2)
+        }
     }
+
+    // headings, divider row, data rows, divider row, summary row
+    return listOfNotNull(
+        headings.toTextRow(),
+        separatorRow("═", "╪"),
+        *data.map { it.toTextRow() }.toTypedArray(),
+        separatorRow("─", "┼"),
+        summaryRow?.toTextRow(),
+    ).joinToString("\n")
 }
 
 /**
@@ -178,48 +188,45 @@ data class ProfileData(val _workerData: Set<WorkerData>) {
      * Useful for manual inspection
      */
     val summary by lazy {
-        """Spans (all times in ms), sorted by time spent (descending)
+        """Database I/O times, sorted by time spent
 ${
             table(
-                listOf("span", "count", "time"),
-                spans.map { listOf(it.niceName(), hitCountOf(it), timeIn(it)) },
-                listOf(
-                    "",
-                    spans.sumOf { hitCountOf(it) },
-                    spans.sumOf { timeIn(it) })
+                headings = listOf("span", "count", "time"),
+                data = spans.map { listOf(it.niceName(), hitCountOf(it), timeIn(it)) },
+                summaryRow = listOf("", spans.sumOf { hitCountOf(it) }, spans.sumOf { timeIn(it) })
             )
         }
 
-Events sorted by hit count (descending)
+Cache hits, sorted by hit count
 ${
             table(
-                listOf("event", "count"),
-                events.map { listOf(it.niceName(), hitCountOf(it)) },
-                listOf(
-                    "",
-                    events.sumOf { hitCountOf(it) })
+                headings = listOf("event", "count"),
+                data = events.map { listOf(it.niceName(), hitCountOf(it)) },
+                summaryRow = listOf("", events.sumOf { hitCountOf(it) })
             )
         }
 
-Spans, by Thread/Coroutine (all times in ms), sorted by time spent (descending)
+Database I/O times, by thread/coroutine, sorted by time spent
 ${
             table(
-                listOf("type", "name") + spans.map { it.niceName() } + listOf("total"),
-                workerData.map { workerData ->
-                    listOf(workerData.worker.type, workerData.worker.name) +
-                            spans.map { span -> workerData.spans[span]?.totalDurationMS ?: 0 } + listOf(
-                        workerData.totalDurationMS
+                headings = listOf("type", "name") + spans.map { it.niceName() } + listOf("total"),
+                data = workerData.map {
+                    listOf(
+                        it.worker.type,
+                        it.worker.name
+                    ) + spans.map { span -> it.spans[span]?.totalDurationMS ?: 0 } + listOf(
+                        it.totalDurationMS
                     )
                 },
-                listOf(
+                summaryRow = listOf(
                     "", /* type */
                     "", /* name */
-                ) +
-                        spans.map { timeIn(it) }
-                        + spans.sumOf { timeIn(it) }
+                ) + spans.map { timeIn(it) } + spans.sumOf { timeIn(it) }
 
             )
         }
+
+* all times in ms
 """
     }
 }

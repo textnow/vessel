@@ -146,33 +146,38 @@ class ProfilerTest {
             }, "test-$it").apply { start() }
         }.forEach { it.join(100) }
 
-        fun row(repeat: Int, vararg words: String): String {
-            return (0 until repeat).joinToString("\n") { "\\s*${words.joinToString("\\s+\\|\\s+")}\\s*" }
-        }
+        fun row(repeat: Int, vararg words: String) =
+            (0 until repeat).joinToString("\n") { "\\s*${words.joinToString("\\s+│\\s+")}\\s*" }
 
-        val separatorRow = { columns: Int -> (1..columns).joinToString("\\|") { "-+" } }
+        val separatorRow =
+            { columns: Int, line: String, divider: String -> (1..columns).joinToString(divider) { "${line}+" } }
         val word = "[^\\s]+"
         val number = "\\d+"
         val space = "\\s+"
         val repeat = { count: Int, value: String -> (1..count).map { value }.toTypedArray() }
 
-        val pattern = """Spans \(all times in ms\), sorted by time spent \(descending\)
+        val pattern = """Database I/O times, sorted by time spent
 ${row(1, "span", "count", "time")}
-${separatorRow(3)}
+${separatorRow(3, "═", "╪")}
 ${row(Span.values().count(), word, number, number)}
+${separatorRow(3, "─", "┼")}
 ${row(1, space, number, number)}
 
-Events sorted by hit count \(descending\)
+Cache hits, sorted by hit count
 ${row(1, "event", "count")}
-${separatorRow(2)}
+${separatorRow(2, "═", "╪")}
 ${(row(Event.values().count(), word, number))}
+${separatorRow(2, "─", "┼")}
 ${row(1, space, number)}
 
-Spans, by Thread/Coroutine \(all times in ms\), sorted by time spent \(descending\)
+Database I/O times, by thread/coroutine, sorted by time spent
 ${row(1, "type", "name", *repeat(7, word))}
-${separatorRow(9)}
+${separatorRow(9, "═", "╪")}
 ${row(threadCount, word, word, *repeat(7, number))}
+${separatorRow(9, "─", "┼")}
 ${row(1, space, space, *repeat(7, number))}
+
+\* all times in ms
 """
 
         assertThat(profiler.snapshot.summary).matches(pattern.toRegex())
