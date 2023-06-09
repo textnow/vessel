@@ -145,11 +145,10 @@ class VesselImpl(
             return
         }
 
-        val entities = profiler.time(Span.PRELOAD_FROM_DB) {
-            dao.getAll()
+        profiler.time(Span.PRELOAD_FROM_DB) {
+            val entities = dao.getAll()
+            preloadImpl(entities)
         }
-
-        preloadImpl(entities)
     }
 
     override fun preloadBlocking() {
@@ -157,11 +156,10 @@ class VesselImpl(
             return
         }
 
-        val entities = profiler.timeBlocking(Span.PRELOAD_FROM_DB) {
-            dao.getAllBlocking()
+        profiler.timeBlocking(Span.PRELOAD_FROM_DB) {
+            val entities = dao.getAllBlocking()
+            preloadImpl(entities)
         }
-
-        preloadImpl(entities)
     }
 
     // endregion
@@ -178,9 +176,7 @@ class VesselImpl(
     /**
      * Convert a stored json string into the specified data type.
      */
-    private fun <T : Any> fromJson(value: String, type: KClass<T>): T? {
-        return gson.fromJson(value, type.java)
-    }
+    private fun <T : Any> fromJson(value: String, type: KClass<T>): T? = gson.fromJson(value, type.java)
 
     /**
      * Convert a specified data type into a json string for storage.
@@ -481,10 +477,12 @@ class VesselImpl(
                         )
                     )
                 }
-                // Note - caching the result of the replace is safe, as any transactional Dao calls will throw on failure
-                // This prevents the cache from getting out of sync with the database
-                // This can be seen by decompiling a generated Room Dao, or somewhat by checking the Room source code generator
-                // (https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:room/)
+
+                /** Note - caching the result of the replace is safe, as any transactional Dao calls will throw on failure
+                 * This prevents the cache from getting out of sync with the database
+                 * This can be seen by decompiling a generated Room Dao, or somewhat by checking the Room source code generator
+                 * (https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:room/)
+                 */
                 cache?.set(oldName, nullValue)
                 cache?.set(newName, new)
             }

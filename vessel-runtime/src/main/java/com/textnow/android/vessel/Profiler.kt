@@ -295,11 +295,14 @@ internal class ProfilerImpl : Profiler {
             WorkerData(worker)
         }
 
-        // Note:  synchronized is safe - and required - here:
-        // * it is a short critical section, so will not block other threads/coroutines
-        // * it is fine-grained, so will not block others accessing other data in this function
-        // * it does not contain any suspension points (suspend fun calls)
-        // Without this, workerData or spanData could become corrupted
+        /** Note:  synchronized is safe - and required - here:
+         *
+         * - It is a short critical section, so will not block other threads/coroutines
+         * - It is fine-grained, so will not block others accessing other data in this function
+         * - It does not contain any suspension points (suspend fun calls)
+         *
+         * Without this, workerData or spanData could become corrupted
+         */
         synchronized(workerData) {
             val spanData = workerData.spans.getOrPut(span) { SpanData(span) }
             spanData.totalDurationMS += duration

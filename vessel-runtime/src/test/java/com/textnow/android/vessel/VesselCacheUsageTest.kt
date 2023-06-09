@@ -7,7 +7,7 @@ package com.textnow.android.vessel
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including witho`Fƒut limitation the rights
+ * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
@@ -52,12 +52,10 @@ class TestCache : DefaultCache() {
     }
 }
 
-data class Data1(val field: Int = 1)
-val data1 = Data1()
-
-data class Data2(val field: Int = 2)
-val data2 = Data2()
-
+/**
+ * Ensure data integrity when a [VesselCache] is used, and that the cache is being used to optimize
+ * get/set/delete/replace calls
+ */
 abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCache>(TestCache(), true) {
 
     /**
@@ -95,9 +93,9 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `already cached data is not read from database again`() = runBlocking {
-        cache!!.set(Data1::class.qualifiedName!!, data1)
+        cache!!.set(SimpleData::class.qualifiedName!!, firstSimple)
 
-        basicVessel.get(Data1::class)
+        basicVessel.get(SimpleData::class)
 
         val profData = vessel.profileData
 
@@ -108,9 +106,9 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `already cached data is not written to database again`() = runBlocking {
-        cache!!.set(Data1::class.qualifiedName!!, data1)
+        cache!!.set(SimpleData::class.qualifiedName!!, firstSimple)
         
-        basicVessel.set(data1)
+        basicVessel.set(firstSimple)
 
         val profData = vessel.profileData
 
@@ -120,8 +118,8 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `already cached data is not deleted in database again`() = runBlocking {
-        basicVessel.delete(Data1::class)
-        basicVessel.delete(Data1::class)
+        basicVessel.delete(SimpleData::class)
+        basicVessel.delete(SimpleData::class)
 
         val profData = vessel.profileData
 
@@ -131,65 +129,65 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `database reads are cached`() = runBlocking {
-        basicVessel.get(Data1::class)
+        basicVessel.get(SimpleData::class)
 
         val profData = vessel.profileData
 
         assertThat(profData?.hitCountOf(Span.READ_FROM_DB)).isEqualTo(1)
         assertThat(profData?.hitCountOf(Event.CACHE_HIT_READ)).isEqualTo(0)
-        assertThat(cache!!.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
+        assertThat(cache!!.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
     }
 
     @Test
-    fun `databasde writes are cached`() = runBlocking {
-        basicVessel.set(data1)
+    fun `database writes are cached`() = runBlocking {
+        basicVessel.set(firstSimple)
 
         val profData = vessel.profileData
 
         assertThat(profData?.hitCountOf(Span.WRITE_TO_DB)).isEqualTo(1)
         assertThat(profData?.hitCountOf(Event.CACHE_HIT_WRITE)).isEqualTo(0)
-        assertThat(cache!!.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(data1)
+        assertThat(cache!!.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(firstSimple)
     }
 
     @Test
     fun `database deletes are cached (as null)`() = runBlocking {
-        basicVessel.delete(Data1::class)
-        val read = basicVessel.get(Data1::class)
+        basicVessel.delete(SimpleData::class)
+        val read = basicVessel.get(SimpleData::class)
 
         val profData = vessel.profileData
 
         assertThat(profData?.hitCountOf(Span.DELETE_FROM_DB)).isEqualTo(1)
         assertThat(profData?.hitCountOf(Event.CACHE_HIT_DELETE)).isEqualTo(0)
-        assertThat(cache!!.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
+        assertThat(cache!!.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
         assertThat(read).isNull()
     }
 
     @Test
     fun `changing values are propagated to cache and db`() = runBlocking{
-        basicVessel.set(Data1(1))
-        val read1 = basicVessel.get(Data1::class)
-        basicVessel.set(Data1(2))
-        val read2 = basicVessel.get(Data1::class)
+        basicVessel.set(firstSimple)
+        val read1 = basicVessel.get(SimpleData::class)
+        basicVessel.set(secondSimple)
+        val read2 = basicVessel.get(SimpleData::class)
 
         val profData = vessel.profileData
 
-        assertThat(Data1(1)).isEqualTo(read1)
-        assertThat(Data1(2)).isEqualTo(read2)
+        assertThat(firstSimple).isEqualTo(read1)
+        assertThat(secondSimple).isEqualTo(read2)
         assertThat(profData?.hitCountOf(Span.WRITE_TO_DB)).isEqualTo(2)
         assertThat(profData?.hitCountOf(Event.CACHE_HIT_READ)).isEqualTo(2)
     }
 
     @Test
     fun `new deletes are propagated to cache and db`() = runBlocking{
-        basicVessel.set(data1)
-        val read1 = basicVessel.get(Data1::class)
-        basicVessel.delete(Data1::class)
-        val read2 = basicVessel.get(Data1::class)
+        basicVessel.set(firstSimple)
+        val read1 = basicVessel.get(SimpleData::class)
+        basicVessel.delete(SimpleData::class)
+        val read2 = basicVessel.get(SimpleData::class)
 
         val profData = vessel.profileData
 
-        assertThat(cache!!.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
-        assertThat(data1).isEqualTo(read1)
+        assertThat(cache!!.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
+        assertThat(firstSimple).isEqualTo(read1)
         assertThat(null).isEqualTo(read2)
         assertThat(profData?.hitCountOf(Span.DELETE_FROM_DB)).isEqualTo(1)
         assertThat(profData?.hitCountOf(Event.CACHE_HIT_READ)).isEqualTo(2)
@@ -204,92 +202,100 @@ class AsyncVesselCacheUsageTest: BaseVesselCacheUsageTest(true)
 @RunWith(AndroidJUnit4::class)
 class SyncVesselCacheUsageTest: BaseVesselCacheUsageTest(false)
 
+/**
+ * Ensure data integrity when a [VesselCache] is used, and that the cache is being used to optimize
+ * get/set/delete/replace calls
+ */
 @Config(sdk = [Build.VERSION_CODES.P])
 @RunWith(AndroidJUnit4::class)
 class AsyncOnlyVesselCacheUsageTest: BaseVesselTest<TestCache>(TestCache(), true) {
     @Test
     fun `replace with new type is cached`() = runBlocking {
-        vessel.set(data1)
+        vessel.set(firstSimple)
         // Note - this will deadlock if using @Rule with InstantTaskExecutorRule.  All other
         // suspend functions still work fine
         // Perhaps some variation on https://issuetracker.google.com/issues/120854786
-        vessel.replace(Data1::class, data2)
+        vessel.replace(SimpleData::class, firstSimpleV2)
 
         val profData = vessel.profileData
 
         assertThat(profData?.hitCountOf(Span.REPLACE_IN_DB)).isEqualTo(1)
-        assertThat(cache!!.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
-        assertThat(cache.get<Data2>(Data2::class.qualifiedName!!)).isEqualTo(data2)
+        assertThat(cache!!.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
+        assertThat(cache.get<SimpleDataV2>(SimpleDataV2::class.qualifiedName!!)).isEqualTo(firstSimpleV2)
     }
 
     @Test
     fun `replace with same type is equivalent to set`() = runBlocking {
-        vessel.set(data1)
+        vessel.set(firstSimple)
         // Note:  This will deadlock if using InstantTaskExecutorRule
-        vessel.replace(Data1::class, Data1(2))
+        vessel.replace(SimpleData::class, secondSimple)
 
         val profData = vessel.profileData
 
         assertThat(profData?.hitCountOf(Span.WRITE_TO_DB)).isEqualTo(2)
-        assertThat(cache!!.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(Data1(2))
+        assertThat(cache!!.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(secondSimple)
     }
 
     @Test
     fun `already cached data is not replaced in database`() = runBlocking {
-        vessel.set(data1)
+        vessel.set(firstSimple)
         // Note:  This will deadlock if using InstantTaskExecutorRule
-        vessel.replace(Data1::class, Data2(2))
-        vessel.replace(Data1::class, Data2(2))
+        vessel.replace(SimpleData::class, firstSimpleV2)
+        vessel.replace(SimpleData::class, firstSimpleV2)
 
         val profData = vessel.profileData
 
         assertThat(profData?.hitCountOf(Span.WRITE_TO_DB)).isEqualTo(1)
         assertThat(profData?.hitCountOf(Event.CACHE_HIT_REPLACE)).isEqualTo(1)
-        assertThat(cache!!.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
+        assertThat(cache!!.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(VesselImpl.nullValue)
     }
 
 }
 
 
+/**
+ * Ensure data integrity when a [VesselCache] is used, and that the cache is being used to optimize
+ * get/set/delete/replace calls
+ */
 @Config(sdk = [Build.VERSION_CODES.P])
 @RunWith(AndroidJUnit4::class)
 class ObserversVesselCacheUsageTest: BaseVesselTest<TestCache>(TestCache()) {
     // Note:  This will deadlock certain transactional DAO methods, such as replace (but not set/delete)
-    @get:Rule()
+    @get:Rule
     val executor = InstantTaskExecutorRule()
 
     @Test
     fun `flow reads are cached`() = runBlocking {
-        vessel.set(data1)
+        vessel.set(firstSimple)
 
-        val ld = vessel.flow(Data1::class)
+        val ld = vessel.flow(SimpleData::class)
 
-        var read: Data1? = null
+        var read: SimpleData? = null
         ld.take(1).collect {
             read = it
         }
 
-        assertThat(read).isEqualTo(data1)
-        assertThat(cache!!.numberOfSetCalls.getOrDefault(Data1::class.qualifiedName, 0)).isEqualTo(2)
-        assertThat(cache.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(data1)
+        assertThat(read).isEqualTo(firstSimple)
+        assertThat(cache!!.numberOfSetCalls.getOrDefault(SimpleData::class.qualifiedName, 0)).isEqualTo(2)
+        assertThat(cache.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(firstSimple)
     }
 
     @Test
     fun `livedata reads are cached`() = runBlocking {
-        val ld = vessel.livedata(Data1::class)
+        val ld = vessel.livedata(SimpleData::class)
 
-        var read: Data1? = null
-        val observer = Observer<Data1?> {
+        var read: SimpleData? = null
+        val observer = Observer<SimpleData?> {
             read = it
         }
 
         ld.observeForever(observer)
-        vessel.set(data1)
+        vessel.set(firstSimple)
 
         ld.removeObserver(observer)
 
-        assertThat(cache!!.numberOfSetCalls.getOrDefault(Data1::class.qualifiedName, 0)).isEqualTo(2)
-        assertThat(read).isEqualTo(data1)
-        assertThat(cache.get<Data1>(Data1::class.qualifiedName!!)).isEqualTo(data1)
+        assertThat(cache!!.numberOfSetCalls.getOrDefault(SimpleData::class.qualifiedName, 0)).isEqualTo(2)
+        assertThat(read).isEqualTo(firstSimple)
+        assertThat(cache.get<SimpleData>(SimpleData::class.qualifiedName!!)).isEqualTo(firstSimple)
     }
 }

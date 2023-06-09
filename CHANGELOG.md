@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2023-06-09
+
+### Added
+
+-   New Vesel functions `preload` and `preloadBlocking`, to load all data into the cache - this is a breaking change to the Vessel interface
+-   New Vessel getter `profileData`, which returns profiling data - time spent in the database by each thread/coroutine, cache hits
+-   New constructor parameter `profile`, to enable/disable above profiling
+
+### Changed
+
+-   `get/getBlocking` now caches the value read from the database
+-   `set/setBlocking` now checks the cache before writing to avoid redundant writes to the database
+-   `delete/deleteBlocking` now caches that the value was deleted
+-   `replace` similarly caches the results of the replace operation
+-    all of the above APIs now check the cache before going to the database, to avoid unnecessary I/O
+-    Update Robolectric to 4.7 - this allows testing on Arm Macs
+
 ## [0.1.3] - 2022-07-15
 
 ### Changed
@@ -46,7 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--   Previously the published dependencies (pom.xml) mapped `implementation` ➞ `compile` and `api` ➞ `runtime`. That has now been corrected to `implementation` ➞ `runtime` and `api` ➞ `compile`. 
+-   Previously the published dependencies (pom.xml) mapped `implementation` ➞ `compile` and `api` ➞ `runtime`. That has now been corrected to `implementation` ➞ `runtime` and `api` ➞ `compile`.
 
 ## [0.1.0] - 2020-10-16
 

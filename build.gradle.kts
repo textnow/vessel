@@ -26,7 +26,7 @@ allprojects {
         jcenter()
     }
 
-    tasks.withType(KotlinCompile::class.java).all {
+    tasks.withType<KotlinCompile> {
         kotlinOptions {
             // Needed for @OptIn(ExperimentalStdlibApi::class) (see Profiler.kt)
             // This goes away in newer version of Kotlin

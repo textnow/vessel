@@ -41,7 +41,7 @@ import org.koin.test.KoinTestRule
 import kotlin.random.Random
 
 /**
- * Validate ability to mock Vessel when an in-memory db is not desired.
+ * Ensure that [Profiler] tracks data accurately and emits sane reports
  */
 @RunWith(JUnit4::class)
 class ProfilerTest {
