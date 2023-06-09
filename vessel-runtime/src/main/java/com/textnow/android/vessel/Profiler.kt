@@ -111,7 +111,7 @@ data class WorkerData(
  * Helper to print text tables
  */
 private fun table(
-    headings: List<Any>,
+    headings: List<String>,
     data: List<List<Any>>,
     summaryRow: List<Any>? = null
 ): String {
