@@ -38,7 +38,6 @@ class NoOpVessel : Vessel {
     override fun <T : Any> typeNameOf(value: T): String = "no-op"
     override fun close() { /* no-op */ }
     override suspend fun preload() { /* no-op */ }
-
     override fun preloadBlocking() { /* no-op */ }
 
     override val profileData: ProfileData? = null
