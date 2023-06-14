@@ -59,7 +59,6 @@ class VesselImpl(
     private val cache: VesselCache? = null,
     private val profile: Boolean = false,
 ) : Vessel {
-    private val TAG = "Vessel"
 
     /**
      * Indicates a null value - use in place of actual null when caching a null value in [VesselCache]
