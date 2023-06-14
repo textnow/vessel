@@ -38,7 +38,6 @@ import org.robolectric.annotation.Config
 
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.take
-import kotlin.reflect.KClass
 
 import com.textnow.android.vessel.model.*
 import org.junit.Rule
@@ -58,44 +57,16 @@ class TestCache : DefaultCache() {
  */
 abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCache>(TestCache(), true) {
 
-    /**
-     * Wraps the basic Vessel get/set/delete operations, so this test can reuse the same
-     * code to test the blocking and suspend functions
-     */
-    class BasicVessel(private val vessel: Vessel, private val async: Boolean = false) {
-        suspend fun <T: Any> get(type: KClass<T>): T? {
-            return if (async) {
-                vessel.get(type)
-            } else {
-                vessel.getBlocking(type)
-            }
-        }
 
-        suspend fun set(value: Any) {
-            if (async) {
-                vessel.set(value)
-            } else {
-                vessel.setBlocking(value)
-            }
-        }
-
-        suspend fun <T: Any> delete(type: KClass<T>) {
-            if (async) {
-                vessel.delete(type)
-            } else {
-                vessel.deleteBlocking(type)
-            }
-        }
-    }
 
     // vessel is injected in base class, defer init
-    private val basicVessel by lazy { BasicVessel(vessel, async) }
+    private val vesselWrapper by lazy { VesselWrapper(vessel, async) }
 
     @Test
     fun `already cached data is not read from database again`() = runBlocking {
         cache!!.set(SimpleData::class.qualifiedName!!, firstSimple)
 
-        basicVessel.get(SimpleData::class)
+        vesselWrapper.get(SimpleData::class)
 
         val profData = vessel.profileData
 
@@ -108,7 +79,7 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
     fun `already cached data is not written to database again`() = runBlocking {
         cache!!.set(SimpleData::class.qualifiedName!!, firstSimple)
         
-        basicVessel.set(firstSimple)
+        vesselWrapper.set(firstSimple)
 
         val profData = vessel.profileData
 
@@ -118,8 +89,8 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `already cached data is not deleted in database again`() = runBlocking {
-        basicVessel.delete(SimpleData::class)
-        basicVessel.delete(SimpleData::class)
+        vesselWrapper.delete(SimpleData::class)
+        vesselWrapper.delete(SimpleData::class)
 
         val profData = vessel.profileData
 
@@ -129,7 +100,7 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `database reads are cached`() = runBlocking {
-        basicVessel.get(SimpleData::class)
+        vesselWrapper.get(SimpleData::class)
 
         val profData = vessel.profileData
 
@@ -140,7 +111,7 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `database writes are cached`() = runBlocking {
-        basicVessel.set(firstSimple)
+        vesselWrapper.set(firstSimple)
 
         val profData = vessel.profileData
 
@@ -151,8 +122,8 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `database deletes are cached (as null)`() = runBlocking {
-        basicVessel.delete(SimpleData::class)
-        val read = basicVessel.get(SimpleData::class)
+        vesselWrapper.delete(SimpleData::class)
+        val read = vesselWrapper.get(SimpleData::class)
 
         val profData = vessel.profileData
 
@@ -164,10 +135,10 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `changing values are propagated to cache and db`() = runBlocking{
-        basicVessel.set(firstSimple)
-        val read1 = basicVessel.get(SimpleData::class)
-        basicVessel.set(secondSimple)
-        val read2 = basicVessel.get(SimpleData::class)
+        vesselWrapper.set(firstSimple)
+        val read1 = vesselWrapper.get(SimpleData::class)
+        vesselWrapper.set(secondSimple)
+        val read2 = vesselWrapper.get(SimpleData::class)
 
         val profData = vessel.profileData
 
@@ -179,10 +150,10 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `new deletes are propagated to cache and db`() = runBlocking{
-        basicVessel.set(firstSimple)
-        val read1 = basicVessel.get(SimpleData::class)
-        basicVessel.delete(SimpleData::class)
-        val read2 = basicVessel.get(SimpleData::class)
+        vesselWrapper.set(firstSimple)
+        val read1 = vesselWrapper.get(SimpleData::class)
+        vesselWrapper.delete(SimpleData::class)
+        val read2 = vesselWrapper.get(SimpleData::class)
 
         val profData = vessel.profileData
 

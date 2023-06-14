@@ -30,10 +30,10 @@ import org.koin.dsl.module
  * Koin module to be reset during each @Test.
  */
 val testModule = module {
-    single<Vessel> {
-        (cache: VesselCache?, profile: Boolean?) -> VesselImpl(
+    factory<Vessel> {
+        (cache: VesselCache?, profile: Boolean?, inMemory: Boolean?) -> VesselImpl(
             appContext = get(),
-            inMemory = true,
+            inMemory = inMemory ?: true,
             allowMainThread = true,
             callback = VesselCallback(
                 onCreate = { println("Database created") },

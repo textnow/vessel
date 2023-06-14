@@ -54,10 +54,20 @@ enum class Span {
  * Used to profile important events such as cache hits.
  */
 enum class Event {
+    /**
+     * Cache hit events - shows effectiveness of caching
+     */
+
     CACHE_HIT_READ,
     CACHE_HIT_WRITE,
     CACHE_HIT_DELETE,
-    CACHE_HIT_REPLACE;
+    CACHE_HIT_REPLACE,
+
+    /**
+     * A timeout occurred during a call to [Vessel.preload], resulting in the preload being
+     * stopped.  Some data will likely still be preloaded, but not all
+     */
+    PRELOAD_TIMEOUT;
 
     /**
      * Friendly name for each enum - ex, "read", "delete", etc.

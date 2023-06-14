@@ -55,13 +55,20 @@ interface Vessel {
      *
      * Many random reads can be slower than one larger read.  Similarly one large read is likely
      * faster than re-writing many values.
+     *
+     * [timeoutMS] should be used when the upper limit on database size is not well understood or is
+     * otherwise unknown.  As database size increases, preload time will as well - at some point
+     * this may exceed the benefits of preloading.  Use [profileData] to understand these performance
+     * tradeoffs against your specific use cases.
+     *
+     * @param timeoutMS Optional timeout - stop the preload operation once execution time exceeds [timeoutMS]
      */
-    suspend fun preload()
+    suspend fun preload(timeoutMS: Int? = null)
 
     /**
      * Blocking version of [preload].
      */
-    fun preloadBlocking()
+    fun preloadBlocking(timeoutMS: Int? = null)
 
     // endregion
 

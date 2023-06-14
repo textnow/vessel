@@ -64,12 +64,6 @@ abstract class VesselDao {
     @Query("DELETE FROM vessel WHERE type = :type")
     abstract fun deleteBlocking(type: String)
 
-    /**
-     * Return all values in this database
-     */
-    @Query("SELECT * FROM vessel")
-    abstract fun getAllBlocking(): List<VesselEntity>
-
     // endregion
 
     // region suspend accessors
@@ -98,12 +92,6 @@ abstract class VesselDao {
      */
     @Query("DELETE FROM vessel WHERE type = :type")
     abstract suspend fun delete(type: String)
-
-    /**
-     * Return all values in this database
-     */
-    @Query("SELECT * FROM vessel")
-    abstract suspend fun getAll(): List<VesselEntity>
 
     // endregion
 
