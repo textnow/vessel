@@ -37,7 +37,7 @@ object Versions {
     const val androidXTest = "1.3.0"
     const val androidXJunit = "1.1.2"
     const val androidXCoreTest = "2.1.0"
-    const val robolectric = "4.4"
+    const val robolectric = "4.7"
     const val mockk = "1.10.0"
     const val assertk = "0.23"
 }

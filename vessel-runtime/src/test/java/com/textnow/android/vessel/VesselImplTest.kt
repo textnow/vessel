@@ -40,7 +40,7 @@ import org.robolectric.annotation.Config
  * These tests will rely on the in-memory room database so we can verify proper serialization.
  * Tests Vessel with caching and non-caching functionality
  */
-abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest(cache) {
+abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest<VesselCache>(cache) {
     @Test
     fun `reasonable names are chosen for data`() {
         assertThat(vessel.typeNameOf(firstSimple)).isEqualTo("com.textnow.android.vessel.model.SimpleData")

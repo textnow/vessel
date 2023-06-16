@@ -56,3 +56,8 @@ data class SimpleDataV2(
     val name: String,
     val number: Double?
 )
+
+val firstSimpleV2 = SimpleDataV2(
+    name = "Test One V2",
+    number = 1.2
+)

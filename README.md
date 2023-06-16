@@ -33,7 +33,7 @@ Their solution, in alpha at the time, proposed a similar idea to what we were do
   * Their API does not allow blocking access. While we would prefer to not use blocking access, we are using it for transitional code that has not yet bet converted to coroutines.
   * Their API requires more effort to integrate. Specifically, it requires you to specify your own serializers.  Vessel does this automatically.
   * Their API does not allow incremental migration of SharedPreferences.  Vessel allows us to migrate our old code in smaller, more manageable chunks.
-  
+
 If those limitations do not apply to you, we encourage you to use the Jetpack solution.
 
 If, on the other hand, our API provides the flexibility you need - welcome aboard.
@@ -43,9 +43,9 @@ If, on the other hand, our API provides the flexibility you need - welcome aboar
 
 ### Personal Access Token
 
-We're currently publishing via [Github Packages](https://github.com/features/packages).  
+We're currently publishing via [Github Packages](https://github.com/features/packages).
 
-Unlike Maven Central, Github requires you to authenticate to pull dependencies. 
+Unlike Maven Central, Github requires you to authenticate to pull dependencies.
 
 We are considering publishing to alternative repositories as well.
 
@@ -68,7 +68,7 @@ In order to use Vessel, you will want to include our repository.  The following 
 ```
 repositories {
     maven {
-        name = "GithubPackages-Vessel" 
+        name = "GithubPackages-Vessel"
         url = uri("https://maven.pkg.github.com/textnow/vessel")
         credentials {
             username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USER")
@@ -86,7 +86,7 @@ You can then use the latest dependency: ![Release](https://img.shields.io/github
 implementation("com.textnow.android.vessel:vessel-runtime:<VERSION>")
 ```
 
-### Initialization 
+### Initialization
 
 The minimum initialization for Vessel would be:
 
@@ -140,7 +140,7 @@ Let's look at the callback a little closer.
 | onCreate | Called when the database has been created |
 | onOpen | Called when the database has been opened |
 | onClosed | Called when the database has been closed |
-| onDestructiveMigration | Called when the database has been migrated destructively | 
+| onDestructiveMigration | Called when the database has been migrated destructively |
 
 In the above example, we are simply calling `Log.d` from the callbacks. If you are calling it from Robolectric, you might consider using `println` instead.
 
@@ -205,6 +205,14 @@ Kotlin:
 vessel.deleteBlocking(SimpleData::class)
 ```
 
+All values can be read into the cache using `preload`.
+
+This can increase performance depending on your data access patterns (see [profiling](#profiling) below)
+
+```
+vessel.preloadBlocking()
+```
+
 #### Suspend Accessors
 
 The suspend accessors are only designed for use by Kotlin coroutines.
@@ -227,6 +235,13 @@ And, deleting a value.
 ```
 suspend fun doWork() {
   vessel.delete(SimpleData::class)
+}
+```
+
+Preloading:
+```
+suspend fun doWork() {
+  vessel.preload()
 }
 ```
 
@@ -260,6 +275,37 @@ val simpleLive: LiveData<SimpleData?> = vessel.livedata(SimpleData::class)
 ```
 
 In both of these cases, you are observing a single row in the database for changes.
+
+#### Profiling
+
+The constructor parameter `profile` can be used to enable profiling.
+
+When enabled profiling data can be accessed using the `profileData` property.
+
+This shows which threads/coroutines are operating on the database and how much time
+each spends doing so.
+
+Cache hits are also tracked, which shows where database operations
+are being avoided due to the successful use of the cache.
+
+This data is helpful in optimizing your data access patterns, and will inform
+when `preload`/`preloadBlocking` should be used to optimize performance.
+
+```
+val profiling = vessel.profileData
+
+// Time spent writing to the database
+profiling.timeIn(Span.WRITE_TO_DB)
+
+// Number of database writes
+profiling.hitCountOf(Span.WRITE_TO_DB)
+
+// Number of avoided writes (cache hit counts)
+profiling.hitCountOf(Event.CACHE_HIT_WRITE)
+
+// Write summary tables of all profiling data to the log
+Log.d(profiling.summary)
+```
 
 #### Helpers (for Testing)
 

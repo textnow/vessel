@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     repositories {
         mavenLocal()
@@ -23,6 +25,16 @@ allprojects {
         google()
         jcenter()
     }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            // Needed for @OptIn(ExperimentalStdlibApi::class) (see Profiler.kt)
+            // This goes away in newer version of Kotlin
+            // This Gradle syntax changes in newer version of Kotlin, see:
+            // https://kotlinlang.org/docs/opt-in-requirements.html#module-wide-opt-in
+            freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
+        }
+    }
 }
 
 kover {
@@ -45,4 +57,6 @@ tasks {
         delete("buildSrc/build")
     }
 }
+
+
 

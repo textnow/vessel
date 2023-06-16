@@ -37,6 +37,10 @@ import kotlin.reflect.KClass
 class NoOpVessel : Vessel {
     override fun <T : Any> typeNameOf(value: T): String = "no-op"
     override fun close() { /* no-op */ }
+    override suspend fun preload(timeoutMS: Int?) { /* no-op */ }
+    override fun preloadBlocking(timeoutMS: Int?) { /* no-op */ }
+
+    override val profileData: ProfileData? = null
     override fun <T : Any> getBlocking(type: KClass<T>): T? = null
     override fun <T : Any> getBlocking(type: Class<T>): T? = null
     override fun <T : Any> setBlocking(value: T) { /* no-op */ }
