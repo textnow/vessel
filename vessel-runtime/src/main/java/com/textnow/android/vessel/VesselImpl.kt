@@ -49,6 +49,7 @@ import kotlin.reflect.KClass
  * @param allowMainThread to allow calls to be made on the main thread. [Default: false]
  * @param callback for notifications of database state changes
  * @param cache Optional [VesselCache]. Built-ins: [DefaultCache] and [LruCache] [Default: null]
+ * @param profile if true, enables profiling.  [profileData] will be non-null in this case.  [Default: false]
  */
 class VesselImpl(
     private val appContext: Context,
