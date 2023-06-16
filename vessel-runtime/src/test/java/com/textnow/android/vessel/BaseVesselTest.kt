@@ -42,7 +42,11 @@ import org.koin.test.inject
  * Base test class to handle starting and stopping Koin,
  * setting up the test module dependency and closing the db.
  */
-abstract class  BaseVesselTest<T: VesselCache>(protected val cache: T? = null, protected val profile: Boolean = false, protected val inMemory: Boolean = true) : KoinTest {
+abstract class BaseVesselTest<T : VesselCache>(
+    protected val cache: T? = null,
+    protected val profile: Boolean = false,
+    protected val inMemory: Boolean = true
+) : KoinTest {
     val vessel: Vessel by inject { parametersOf(cache, profile, inMemory) }
 
     @get:Rule
@@ -57,6 +61,7 @@ abstract class  BaseVesselTest<T: VesselCache>(protected val cache: T? = null, p
         //modules(testModule)
         koin.loadModules(listOf(testModule))
     }
+
     @After
     fun tearDown() {
         try {

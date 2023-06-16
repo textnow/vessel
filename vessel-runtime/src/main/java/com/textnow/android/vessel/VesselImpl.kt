@@ -219,7 +219,7 @@ class VesselImpl(
     /**
      * Convert a stored json string into the specified data type.
      */
-    private fun <T : Any> fromJson(value: String, type: KClass<T>): T? = gson.fromJson(value, type.java)
+    private fun <T : Any> fromJson(value: String, type: KClass<T>): T? = gson.fromJson<T>(value, type.java)
 
     /**
      * Convert a specified data type into a json string for storage.

@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.4] - 2023-06-09
-
 ### Added
 
 -   New Vesel functions `preload` and `preloadBlocking`, to load all data into the cache - this is a breaking change to the Vessel interface
