@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2023-06-16
+
 ### Added
 
 -   New Vesel functions `preload` and `preloadBlocking`, to load all data into the cache - this is a breaking change to the Vessel interface
@@ -19,8 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `set/setBlocking` now checks the cache before writing to avoid redundant writes to the database
 -   `delete/deleteBlocking` now caches that the value was deleted
 -   `replace` similarly caches the results of the replace operation
--    all of the above APIs now check the cache before going to the database, to avoid unnecessary I/O
--    Update Robolectric to 4.7 - this allows testing on Arm Macs
+-   all of the above APIs now check the cache before going to the database, to avoid unnecessary I/O
+-   Update Robolectric to 4.7 - this allows testing on Arm Macs
 
 ## [0.1.3] - 2022-07-15
 
@@ -79,7 +81,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-[Unreleased]: https://github.com/textnow/vessel/compare/0.1.3...HEAD
+[Unreleased]: https://github.com/textnow/vessel/compare/1.0.0...HEAD
+
+[1.0.0]: https://github.com/textnow/vessel/compare/0.1.3...1.0.0
 
 [0.1.3]: https://github.com/textnow/vessel/compare/0.1.2...0.1.3
 
