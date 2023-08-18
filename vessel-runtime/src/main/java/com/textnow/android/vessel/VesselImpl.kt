@@ -184,7 +184,7 @@ class VesselImpl(
             return PreloadReport(errorsOcurred = true)
         }
 
-        val report = profiler.time(Span.PRELOAD_FROM_DB) {
+        return profiler.time(Span.PRELOAD_FROM_DB) {
             /**
              * This is exactly the same pattern that the Room code generator emits/
              * Implementing this way so preloading can bail out if a time limit is hit
@@ -197,8 +197,6 @@ class VesselImpl(
                 preloadImpl(timeoutMS)
             }
         }
-
-        return report
     }
 
     override fun preloadBlocking(timeoutMS: Int?): PreloadReport {
@@ -206,11 +204,9 @@ class VesselImpl(
             return PreloadReport(errorsOcurred = true)
         }
 
-        val report = profiler.timeBlocking(Span.PRELOAD_FROM_DB) {
+        return profiler.timeBlocking(Span.PRELOAD_FROM_DB) {
             preloadImpl(timeoutMS)
         }
-
-        return report
     }
 
     // endregion
