@@ -163,6 +163,7 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
         assertThat(profData?.hitCountOf(Span.DELETE_FROM_DB)).isEqualTo(1)
         assertThat(profData?.hitCountOf(Event.CACHE_HIT_READ)).isEqualTo(2)
     }
+
 }
 
 @Config(sdk = [Build.VERSION_CODES.P])

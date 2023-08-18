@@ -31,11 +31,11 @@ class VesselWrapper(private val vessel: Vessel, private val async: Boolean = fal
         }
     }
 
-    suspend fun preload(timeoutMS: Int?) {
+    suspend fun preload(timeoutMS: Int?): PreloadReport {
         if (async) {
-            vessel.preload(timeoutMS)
+            return vessel.preload(timeoutMS)
         } else {
-            vessel.preloadBlocking(timeoutMS)
+            return vessel.preloadBlocking(timeoutMS)
         }
     }
 

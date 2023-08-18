@@ -30,8 +30,8 @@ import org.koin.dsl.module
  * Koin module to be reset during each @Test.
  */
 val testModule = module {
-    factory<Vessel> {
-        (cache: VesselCache?, profile: Boolean?, inMemory: Boolean?) -> VesselImpl(
+    factory<Vessel> { (cache: VesselCache?, profile: Boolean?, inMemory: Boolean?, db: VesselDb) ->
+        VesselImpl(
             appContext = get(),
             inMemory = inMemory ?: true,
             allowMainThread = true,
@@ -42,7 +42,8 @@ val testModule = module {
                 onDestructiveMigration = { println("Destructive migration") }
             ),
             cache = cache,
-            profile = profile ?: false
+            profile = profile ?: false,
+            externalDb = db
         )
     }
 }
