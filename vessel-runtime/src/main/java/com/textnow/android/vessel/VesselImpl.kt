@@ -214,7 +214,11 @@ class VesselImpl(
     // region profiling
 
     override val profileData
-        get() = profiler.snapshot
+        get() = if (DummyProfiler::class.isInstance(profiler)) {
+            null
+        } else {
+            profiler.snapshot
+        }
 
     // endregion
 
