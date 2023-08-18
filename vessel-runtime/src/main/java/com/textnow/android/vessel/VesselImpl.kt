@@ -155,7 +155,7 @@ class VesselImpl(
                 }
 
                 val obj = try {
-                        if (data != null) fromJson(data, kclass) else nullValue
+                    if (data != null) fromJson(data, kclass) else nullValue
                 } catch (error: Exception) {
                     report.deserializationErrors.add(type)
                     report.errorsOcurred = true
@@ -290,7 +290,7 @@ class VesselImpl(
      * in the database.  This can be used to avoid going to the database to determine if the value exists
      */
     private fun <T : Any> findCached(type: KClass<T>): Pair<Boolean, T?> {
-        // omitting use of qualifiedNameOf to avoid double-counting the CLASS_NOT_FOUND event
+        // omitting use of qualifiedNameOf to avoid double-counting the TYPE_NOT_FOUND event
         val typeName = type.qualifiedName ?: return Pair(false, null)
 
         return when (val lookup = cache?.get<T>(typeName)) {

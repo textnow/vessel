@@ -1,5 +1,3 @@
-package com.textnow.android.vessel
-
 /**
  * MIT License
  *
@@ -23,6 +21,8 @@ package com.textnow.android.vessel
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+package com.textnow.android.vessel
 
 import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
