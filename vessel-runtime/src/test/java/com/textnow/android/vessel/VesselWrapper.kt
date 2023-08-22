@@ -31,7 +31,7 @@ import kotlin.reflect.KClass
  * code to test the blocking and suspend functions
  */
 class VesselWrapper(private val vessel: Vessel, private val async: Boolean = false) {
-    suspend fun <T: Any> get(type: KClass<T>): T? {
+    suspend fun <T : Any> get(type: KClass<T>): T? {
         return if (async) {
             vessel.get(type)
         } else {
@@ -47,7 +47,7 @@ class VesselWrapper(private val vessel: Vessel, private val async: Boolean = fal
         }
     }
 
-    suspend fun <T: Any> delete(type: KClass<T>) {
+    suspend fun <T : Any> delete(type: KClass<T>) {
         if (async) {
             vessel.delete(type)
         } else {
@@ -55,12 +55,10 @@ class VesselWrapper(private val vessel: Vessel, private val async: Boolean = fal
         }
     }
 
-    suspend fun preload(timeoutMS: Int?): PreloadReport {
-        if (async) {
-            return vessel.preload(timeoutMS)
-        } else {
-            return vessel.preloadBlocking(timeoutMS)
-        }
+    suspend fun preload(timeoutMS: Int?) = if (async) {
+        vessel.preload(timeoutMS)
+    } else {
+        vessel.preloadBlocking(timeoutMS)
     }
 
     val profileData get() = vessel.profileData

@@ -169,7 +169,6 @@ class VesselImpl(
                     if (duration > it) {
                         report.timedOut = true
                         profiler.countBlocking(Event.PRELOAD_TIMEOUT)
-                        cursor.close()
                         return report
                     }
                 }
