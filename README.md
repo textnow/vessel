@@ -217,7 +217,7 @@ changed or no longer exists, it will fail to deserialize.  This can happen if yo
 remove types/values that fall out of use, or if your application does not migrate one type to another 
 (see `replaceBlocking` below, which can be used to migrate values).
 
-To help with this, `preload` returns a status object `PreloadBlocking` that will indicate if any such 
+To help with this, `preload` returns a status object `PreloadReport` that will indicate if any such 
 errors occur - which types failed to deserialize and why.  The profiling data also includes a subset
 of this report.
 
