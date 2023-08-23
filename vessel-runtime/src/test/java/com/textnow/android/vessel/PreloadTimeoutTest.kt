@@ -1,5 +1,3 @@
-package com.textnow.android.vessel
-
 /**
  * MIT License
  *
@@ -24,12 +22,16 @@ package com.textnow.android.vessel
  * SOFTWARE.
  */
 
+package com.textnow.android.vessel
+
 import android.os.Build
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
 import assertk.assertions.isLessThan
 import assertk.assertions.isSuccess
+import assertk.assertions.isTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -59,9 +61,9 @@ class SlowCache(val insertDelayMS: Long) : DefaultCache() {
 /**
  * Ensure preload timeouts work as expected, and that the resulting data is still usable and correct
  */
-abstract class BasePreloadTest(private val async: Boolean): BaseVesselTest<VesselCache>(DefaultCache(), true, false) {
+abstract class BasePreloadTimeoutTest(private val async: Boolean): BaseVesselTest<VesselCache>(DefaultCache(), true, false) {
     private val slowCache = SlowCache(100)
-    private val slowVessel by lazy{VesselWrapper(get<Vessel>{parametersOf(slowCache, true, false)}, async)}
+    private val slowVessel by lazy{VesselWrapper(get<Vessel>{parametersOf(slowCache, true, false, null)}, async)}
 
     @Test
     fun `preload allows null timeout`(): Unit = runBlocking {
@@ -79,7 +81,7 @@ abstract class BasePreloadTest(private val async: Boolean): BaseVesselTest<Vesse
 
         // 2 entries to preload -> 2x cache insert time
         // Set timeout to << insert time
-        slowVessel.preload(slowCache.insertDelayMS.toInt() / numberOfEntries)
+        val preloadReport = slowVessel.preload(slowCache.insertDelayMS.toInt() / numberOfEntries)
 
         // Only one entry should load into cache before timeout is hit
         assertThat(slowCache.setCount).isEqualTo(1)
@@ -90,18 +92,19 @@ abstract class BasePreloadTest(private val async: Boolean): BaseVesselTest<Vesse
         // Will go to disk
         val data1v2 = slowVessel.get(SimpleDataV2::class)
 
-        val profileData = slowVessel.profileData
+        val profileData = slowVessel.profileData!!
 
         // Timeout should be hit
-        assertThat(profileData?.hitCountOf(Event.PRELOAD_TIMEOUT)).isEqualTo(1)
+        assertThat(preloadReport.timedOut).isTrue()
+        assertThat(profileData.hitCountOf(Event.PRELOAD_TIMEOUT)).isEqualTo(1)
         // Cache hit
-        assertThat(profileData?.hitCountOf(Event.CACHE_HIT_READ)).isEqualTo(1)
+        assertThat(profileData.hitCountOf(Event.CACHE_HIT_READ)).isEqualTo(1)
         // Go to disk
-        assertThat(profileData?.hitCountOf(Span.READ_FROM_DB)).isEqualTo(1)
+        assertThat(profileData.hitCountOf(Span.READ_FROM_DB)).isEqualTo(1)
         // Second disk read cached
         assertThat(slowCache.setCount).isEqualTo(2)
         // Timeout was hit in a sane amount of time
-        assertThat(profileData?.timeIn(Span.PRELOAD_FROM_DB)!!).isLessThan(slowCache.insertDelayMS*numberOfEntries)
+        assertThat(profileData.timeIn(Span.PRELOAD_FROM_DB)).isLessThan(slowCache.insertDelayMS*numberOfEntries)
 
         // Sanity
         assertThat(data1).isEqualTo(firstSimple)
@@ -117,7 +120,7 @@ abstract class BasePreloadTest(private val async: Boolean): BaseVesselTest<Vesse
 
         // 2 entries to prelaod -> 2x cache insertion time
         // Set timeout to >> insertion time
-        slowVessel.preload(slowCache.insertDelayMS.toInt()*numberOfEntries*2)
+        val preloadReport = slowVessel.preload(slowCache.insertDelayMS.toInt()*numberOfEntries*2)
 
         // Both entries should be cached
         assertThat(slowCache.setCount).isEqualTo(2)
@@ -126,27 +129,27 @@ abstract class BasePreloadTest(private val async: Boolean): BaseVesselTest<Vesse
         val data1 = slowVessel.get(SimpleData::class)
         val data1v2 = slowVessel.get(SimpleDataV2::class)
 
-        val profileData = slowVessel.profileData
+        val profileData = slowVessel.profileData!!
 
         // Timeout should not be hit
-        assertThat(profileData?.hitCountOf(Event.PRELOAD_TIMEOUT)).isEqualTo(0)
+        assertThat(preloadReport.timedOut).isFalse()
+        assertThat(profileData.hitCountOf(Event.PRELOAD_TIMEOUT)).isEqualTo(0)
         // Cache hit both reads
-        assertThat(profileData?.hitCountOf(Event.CACHE_HIT_READ)).isEqualTo(2)
+        assertThat(profileData.hitCountOf(Event.CACHE_HIT_READ)).isEqualTo(2)
         // Does not go to disk
-        assertThat(profileData?.hitCountOf(Span.READ_FROM_DB)).isEqualTo(0)
+        assertThat(profileData.hitCountOf(Span.READ_FROM_DB)).isEqualTo(0)
 
         // Sanity
         assertThat(data1).isEqualTo(firstSimple)
         assertThat(data1v2).isEqualTo(firstSimpleV2)
     }
-
 }
 
 
 @Config(sdk = [Build.VERSION_CODES.P])
 @RunWith(AndroidJUnit4::class)
-class SyncPreloadTest: BasePreloadTest(false)
+class SyncPreloadTimeoutTest: BasePreloadTimeoutTest(false)
 
 @Config(sdk = [Build.VERSION_CODES.P])
 @RunWith(AndroidJUnit4::class)
-class AsyncPreloadTest: BasePreloadTest(true)
+class AsyncPreloadTimeoutTest: BasePreloadTimeoutTest(true)

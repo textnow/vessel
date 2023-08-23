@@ -55,7 +55,7 @@ enum class Span {
  */
 enum class Event {
     /**
-     * Cache hit events - shows effectiveness of caching
+     * Cache hit events - shows effectiveness of caching.
      */
 
     CACHE_HIT_READ,
@@ -64,10 +64,28 @@ enum class Event {
     CACHE_HIT_REPLACE,
 
     /**
-     * A timeout occurred during a call to [Vessel.preload], resulting in the preload being
-     * stopped.  Some data will likely still be preloaded, but not all
+     * Indicates the [Vessel.preload] timeout was exceeded (if specified).
+     * Analogous to [PreloadReport.timedOut], included here for completeness.
      */
-    PRELOAD_TIMEOUT;
+    PRELOAD_TIMEOUT,
+
+    /**
+     * Indicates the definitionof a type could not be found, either during [Vessel.preload] or as part of any
+     * [Vessel.get] or [Vessel.set] call.
+     *
+     * See [PreloadReport.missingTypes] for more information.
+     */
+    TYPE_NOT_FOUND,
+
+    /**
+     * Indicates the persisted data for a type could not be deserialized into its current
+     * representation.
+     *
+     * This may occur as part of a call to [Vessel.preload] or [Vessel.get].
+     *
+     * See [PreloadReport.deserializationErrors] for more information.
+     */
+    DESERIALIZATION_ERROR;
 
     /**
      * Friendly name for each enum - ex, "read", "delete", etc.

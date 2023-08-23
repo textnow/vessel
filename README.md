@@ -205,9 +205,22 @@ Kotlin:
 vessel.deleteBlocking(SimpleData::class)
 ```
 
-All values can be read into the cache using `preload`.
+All values can be read into the cache using `preloadBlocking`.
 
-This can increase performance depending on your data access patterns (see [profiling](#profiling) below)
+This can increase performance depending on your data access patterns (see [profiling](#profiling) below).
+
+Since preloading reads all values from the database, this may end up reading old types/values your 
+application is no longer using.  
+
+If your application's code has changed such that the type definition for such a value has 
+changed or no longer exists, it will fail to deserialize.  This can happen if your application does not 
+remove types/values that fall out of use, or if your application does not migrate one type to another 
+(see `replaceBlocking` below, which can be used to migrate values).
+
+To help with this, `preload` returns a status object `PreloadReport` that will indicate if any such 
+errors occur - which types failed to deserialize and why.  The profiling data also includes a subset
+of this report.
+
 
 ```
 vessel.preloadBlocking()

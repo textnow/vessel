@@ -59,6 +59,7 @@ class VesselImpl(
     private val callback: VesselCallback? = null,
     private val cache: VesselCache? = null,
     private val profile: Boolean = false,
+    externalDb: VesselDb? = null,
 ) : Vessel {
 
     /**
@@ -89,10 +90,7 @@ class VesselImpl(
         // other configuration
         .create()
 
-    /**
-     * Underlying Room instance.
-     */
-    private val db: VesselDb = when (inMemory) {
+    private val db: VesselDb = externalDb ?: when (inMemory) {
         true -> Room.inMemoryDatabaseBuilder(appContext, VesselDb::class.java)
         false -> Room.databaseBuilder(appContext, VesselDb::class.java, name)
     }
@@ -133,7 +131,7 @@ class VesselImpl(
      *
      * @return true only if the entire database could be loaded into cache in the allotted timeout
      */
-    private fun preloadImpl(timeoutMS: Int?): Boolean {
+    private fun preloadImpl(timeoutMS: Int?): PreloadReport {
         val cursor = db.query("SELECT * FROM vessel", emptyArray())
 
         cursor.use {
@@ -141,6 +139,8 @@ class VesselImpl(
             val dataCol = cursor.getColumnIndex("data")
 
             val startTimeMS = System.currentTimeMillis()
+            val report = PreloadReport()
+
             while (cursor.moveToNext()) {
                 val type = cursor.getString(typeCol)
                 val data = cursor.getString(dataCol)
@@ -148,31 +148,42 @@ class VesselImpl(
                 val kclass = try {
                     Class.forName(type).kotlin
                 } catch (error: Exception) {
+                    report.missingTypes.add(type)
+                    report.errorsOcurred = true
+                    profiler.countBlocking(Event.TYPE_NOT_FOUND)
                     continue
                 }
 
-                val obj = if (data != null) fromJson(data, kclass) else nullValue
+                val obj = try {
+                    if (data != null) fromJson(data, kclass) else nullValue
+                } catch (error: Exception) {
+                    report.deserializationErrors.add(type)
+                    report.errorsOcurred = true
+                    continue
+                }
+
                 cache?.set(type, obj as Any)
 
                 timeoutMS?.let {
                     val duration = System.currentTimeMillis() - startTimeMS
                     if (duration > it) {
-                        cursor.close()
-                        return false
+                        report.timedOut = true
+                        profiler.countBlocking(Event.PRELOAD_TIMEOUT)
+                        return report
                     }
                 }
             }
 
-            return true
+            return report
         }
     }
 
-    override suspend fun preload(timeoutMS: Int?) {
+    override suspend fun preload(timeoutMS: Int?): PreloadReport {
         if (cache == null) {
-            return
+            return PreloadReport(errorsOcurred = true)
         }
 
-        val loadCompleted = profiler.time(Span.PRELOAD_FROM_DB) {
+        return profiler.time(Span.PRELOAD_FROM_DB) {
             /**
              * This is exactly the same pattern that the Room code generator emits/
              * Implementing this way so preloading can bail out if a time limit is hit
@@ -185,23 +196,15 @@ class VesselImpl(
                 preloadImpl(timeoutMS)
             }
         }
-
-        if (!loadCompleted) {
-            profiler.count(Event.PRELOAD_TIMEOUT)
-        }
     }
 
-    override fun preloadBlocking(timeoutMS: Int?) {
+    override fun preloadBlocking(timeoutMS: Int?): PreloadReport {
         if (cache == null) {
-            return
+            return PreloadReport(errorsOcurred = true)
         }
 
-        val loadCompleted = profiler.timeBlocking(Span.PRELOAD_FROM_DB) {
+        return profiler.timeBlocking(Span.PRELOAD_FROM_DB) {
             preloadImpl(timeoutMS)
-        }
-
-        if (!loadCompleted) {
-            profiler.countBlocking(Event.PRELOAD_TIMEOUT)
         }
     }
 
@@ -210,7 +213,11 @@ class VesselImpl(
     // region profiling
 
     override val profileData
-        get() = profiler.snapshot
+        get() = if (DummyProfiler::class.isInstance(profiler)) {
+            null
+        } else {
+            profiler.snapshot
+        }
 
     // endregion
 
@@ -219,7 +226,14 @@ class VesselImpl(
     /**
      * Convert a stored json string into the specified data type.
      */
-    private fun <T : Any> fromJson(value: String, type: KClass<T>): T? = gson.fromJson<T>(value, type.java)
+    private fun <T : Any> fromJson(value: String, type: KClass<T>): T? {
+        try {
+            return gson.fromJson(value, type.java)
+        } catch (error: Exception) {
+            profiler.countBlocking(Event.DESERIALIZATION_ERROR)
+            throw error
+        }
+    }
 
     /**
      * Convert a specified data type into a json string for storage.
@@ -230,8 +244,26 @@ class VesselImpl(
      * Get the type of the specified data.
      */
     @VisibleForTesting
-    override fun <T : Any> typeNameOf(value: T) = value.javaClass.kotlin.qualifiedName
-        ?: throw AssertionError("anonymous classes not allowed. their names will change if the parent code is changed.")
+    override fun <T : Any> typeNameOf(value: T): String {
+        val name = value.javaClass.kotlin.qualifiedName
+
+        if (name == null) {
+            profiler.countBlocking(Event.TYPE_NOT_FOUND)
+            throw AssertionError("anonymous classes not allowed. their names will change if the parent code is changed.")
+        }
+
+        return name
+    }
+
+    fun<T:Any> qualifiedNameOf(type: KClass<T>): String? {
+        val name = type.qualifiedName
+
+        if (name == null) {
+            profiler.countBlocking(Event.TYPE_NOT_FOUND)
+        }
+
+        return name
+    }
 
     /**
      * Close the database instance.
@@ -257,6 +289,7 @@ class VesselImpl(
      * in the database.  This can be used to avoid going to the database to determine if the value exists
      */
     private fun <T : Any> findCached(type: KClass<T>): Pair<Boolean, T?> {
+        // omitting use of qualifiedNameOf to avoid double-counting the TYPE_NOT_FOUND event
         val typeName = type.qualifiedName ?: return Pair(false, null)
 
         return when (val lookup = cache?.get<T>(typeName)) {
@@ -303,7 +336,7 @@ class VesselImpl(
             return value
         }
 
-        val typeName = type.qualifiedName ?: return null
+        val typeName = qualifiedNameOf(type) ?: return null
 
         return profiler.timeBlocking(Span.READ_FROM_DB) {
             dao.getBlocking(typeName)
@@ -367,7 +400,7 @@ class VesselImpl(
             return
         }
 
-        type.qualifiedName?.let { typeName ->
+        qualifiedNameOf(type)?.let { typeName ->
             profiler.timeBlocking(Span.DELETE_FROM_DB) {
                 dao.deleteBlocking(typeName)
             }
@@ -402,7 +435,7 @@ class VesselImpl(
             return value
         }
 
-        val typeName = type.qualifiedName ?: return null
+        val typeName = qualifiedNameOf(type) ?: return null
 
         return profiler.time(Span.READ_FROM_DB) {
             dao.get(typeName)
@@ -458,7 +491,7 @@ class VesselImpl(
             return
         }
 
-        type.qualifiedName?.let { typeName ->
+        qualifiedNameOf(type)?.let { typeName ->
             profiler.time(Span.DELETE_FROM_DB) {
                 dao.delete(typeName)
             }
@@ -498,7 +531,7 @@ class VesselImpl(
 
         val newName = typeNameOf(new)
 
-        oldType.qualifiedName?.let { oldName ->
+        qualifiedNameOf(oldType)?.let { oldName ->
             if (oldName == newName) {
                 set(new)
             } else {
@@ -555,7 +588,7 @@ class VesselImpl(
      */
     override fun <T : Any> flow(type: KClass<T>): Flow<T?> {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
-        type.qualifiedName?.let { typeName ->
+        qualifiedNameOf(type)?.let { typeName ->
             return dao.getFlow(typeName)
                 .distinctUntilChanged()
                 .map {
@@ -577,7 +610,7 @@ class VesselImpl(
      */
     override fun <T : Any> livedata(type: KClass<T>): LiveData<T?> {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
-        type.qualifiedName?.let { typeName ->
+        qualifiedNameOf(type)?.let { typeName ->
             return dao.getLiveData(typeName)
                 .distinctUntilChanged()
                 .map {

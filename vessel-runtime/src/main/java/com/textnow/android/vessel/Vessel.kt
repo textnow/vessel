@@ -63,12 +63,12 @@ interface Vessel {
      *
      * @param timeoutMS Optional timeout - stop the preload operation once execution time exceeds [timeoutMS]
      */
-    suspend fun preload(timeoutMS: Int? = null)
+    suspend fun preload(timeoutMS: Int? = null): PreloadReport
 
     /**
      * Blocking version of [preload].
      */
-    fun preloadBlocking(timeoutMS: Int? = null)
+    fun preloadBlocking(timeoutMS: Int? = null): PreloadReport
 
     // endregion
 

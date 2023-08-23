@@ -27,13 +27,10 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.textnow.android.vessel.di.testModule
 import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.Koin
-import org.koin.core.context.stopKoin
 import org.koin.core.parameter.parametersOf
-import org.koin.test.AutoCloseKoinTest
 import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.inject
@@ -45,9 +42,10 @@ import org.koin.test.inject
 abstract class BaseVesselTest<T : VesselCache>(
     protected val cache: T? = null,
     protected val profile: Boolean = false,
-    protected val inMemory: Boolean = true
+    protected val inMemory: Boolean = true,
+    protected val db: VesselDb? = null,
 ) : KoinTest {
-    val vessel: Vessel by inject { parametersOf(cache, profile, inMemory) }
+    val vessel: Vessel by inject { parametersOf(cache, profile, inMemory, db) }
 
     @get:Rule
     val koinTestRule = KoinTestRule.create {

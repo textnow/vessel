@@ -28,11 +28,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
+import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import com.textnow.android.vessel.model.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.test.get
 import org.robolectric.annotation.Config
 
 /**
@@ -161,6 +163,12 @@ abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest<VesselCache>(
         assertThat(vessel.get(SimpleData::class)).isNull()
         assertThat(vessel.get(MappedData::class)).isNull()
         assertThat(vessel.get(NestedData::class)).isNull()
+    }
+
+    @Test
+    fun `profileData is null when profiling is disabled`() {
+        assertThat(profile).isFalse()
+        assertThat(vessel.profileData).isNull()
     }
 }
 
