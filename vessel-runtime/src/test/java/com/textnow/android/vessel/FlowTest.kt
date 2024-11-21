@@ -84,13 +84,13 @@ class FlowTest : BaseVesselTest<DefaultCache>() {
 
         assertThat(result).containsExactly(null)
 
-        vessel.set(firstSimple)
+        vessel.set(firstSimple, Dispatchers.Main)
         assertThat(result).containsExactly(null, firstSimple)
 
-        vessel.set(mapped)
+        vessel.set(mapped, Dispatchers.Main)
         assertThat(result).containsExactly(null, firstSimple)
 
-        vessel.set(secondSimple)
+        vessel.set(secondSimple, Dispatchers.Main)
         assertThat(result).containsExactly(null, firstSimple, secondSimple)
 
         job.cancel()

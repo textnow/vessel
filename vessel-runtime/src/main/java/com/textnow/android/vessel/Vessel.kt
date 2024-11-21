@@ -25,6 +25,8 @@ package com.textnow.android.vessel
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlin.reflect.KClass
 
@@ -134,21 +136,30 @@ interface Vessel {
      * @param type of data class to lookup
      * @return the data, or null if it does not exist
      */
-    suspend fun <T : Any> get(type: KClass<T>): T?
+    suspend fun <T : Any> get(
+        type: KClass<T>,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
+    ): T?
 
     /**
      * Set the specified data, in a suspend function.
      *
      * @param value of the data class to set/replace.
      */
-    suspend fun <T : Any> set(value: T)
+    suspend fun <T : Any> set(
+        value: T,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
+    )
 
     /**
      * Delete the specified data, in a suspend function.
      *
      * @param type of data class to delete
      */
-    suspend fun <T : Any> delete(type: KClass<T>)
+    suspend fun <T : Any> delete(
+        type: KClass<T>,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
+    )
 
     // endregion
 
@@ -172,7 +183,11 @@ interface Vessel {
      * @param oldType of data model to remove
      * @param new data model to add
      */
-    suspend fun <OLD : Any, NEW : Any> replace(oldType: KClass<OLD>, new: NEW)
+    suspend fun <OLD : Any, NEW : Any> replace(
+        oldType: KClass<OLD>,
+        new: NEW,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
+    )
 
     /**
      * Clear the database.
