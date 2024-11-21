@@ -33,10 +33,12 @@ import androidx.room.CoroutinesRoom
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlin.reflect.KClass
 
 /**
@@ -425,19 +427,19 @@ class VesselImpl(
      * @param type of data class to lookup
      * @return the data, or null if it does not exist
      */
-    override suspend fun <T : Any> get(type: KClass<T>): T? {
+    override suspend fun <T : Any> get(type: KClass<T>): T? = withContext(Dispatchers.IO) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
 
         val (exists, value) = findCached(type)
 
         if (exists) {
             profiler.count(Event.CACHE_HIT_READ)
-            return value
+            return@withContext value
         }
 
-        val typeName = qualifiedNameOf(type) ?: return null
+        val typeName = qualifiedNameOf(type) ?: return@withContext null
 
-        return profiler.time(Span.READ_FROM_DB) {
+        return@withContext profiler.time(Span.READ_FROM_DB) {
             dao.get(typeName)
         }?.data?.let { entity ->
             fromJson(entity, type).also { data ->
@@ -455,12 +457,12 @@ class VesselImpl(
      *
      * @param value of the data class to set/replace.
      */
-    override suspend fun <T : Any> set(value: T) {
+    override suspend fun <T : Any> set(value: T): Unit = withContext(Dispatchers.IO) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
 
         if (inCache(value)) {
             profiler.count(Event.CACHE_HIT_WRITE)
-            return
+            return@withContext
         }
 
         typeNameOf(value).let { typeName ->
@@ -481,14 +483,14 @@ class VesselImpl(
      *
      * @param type of the data class to remove.
      */
-    override suspend fun <T : Any> delete(type: KClass<T>) {
+    override suspend fun <T : Any> delete(type: KClass<T>): Unit = withContext(Dispatchers.IO) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
 
         val (exists, value) = findCached(type)
 
         if (exists && value == null) {
             profiler.count(Event.CACHE_HIT_DELETE)
-            return
+            return@withContext
         }
 
         qualifiedNameOf(type)?.let { typeName ->
@@ -526,7 +528,7 @@ class VesselImpl(
     override suspend fun <OLD : Any, NEW : Any> replace(
         oldType: KClass<OLD>,
         new: NEW
-    ) {
+    ): Unit = withContext(Dispatchers.IO) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
 
         val newName = typeNameOf(new)
@@ -538,7 +540,7 @@ class VesselImpl(
                 val (oldExists, oldValue) = findCached(oldType)
                 if (inCache(new) && oldExists && oldValue == null) {
                     profiler.count(Event.CACHE_HIT_REPLACE)
-                    return
+                    return@let
                 }
 
                 profiler.time(Span.REPLACE_IN_DB) {
@@ -550,6 +552,12 @@ class VesselImpl(
                         )
                     )
                 }
+
+                /** Note - caching the result of the replace is safe, as any transactional Dao calls will throw on failure
+                 * This prevents the cache from getting out of sync with the database
+                 * This can be seen by decompiling a generated Room Dao, or somewhat by checking the Room source code generator
+                 * (https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:room/)
+                 */
 
                 /** Note - caching the result of the replace is safe, as any transactional Dao calls will throw on failure
                  * This prevents the cache from getting out of sync with the database
