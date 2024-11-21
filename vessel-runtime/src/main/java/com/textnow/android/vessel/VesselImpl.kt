@@ -558,12 +558,6 @@ class VesselImpl(
                  * This can be seen by decompiling a generated Room Dao, or somewhat by checking the Room source code generator
                  * (https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:room/)
                  */
-
-                /** Note - caching the result of the replace is safe, as any transactional Dao calls will throw on failure
-                 * This prevents the cache from getting out of sync with the database
-                 * This can be seen by decompiling a generated Room Dao, or somewhat by checking the Room source code generator
-                 * (https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:room/)
-                 */
                 cache?.set(oldName, nullValue)
                 cache?.set(newName, new)
             }
