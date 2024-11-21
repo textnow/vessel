@@ -33,7 +33,6 @@ import androidx.room.CoroutinesRoom
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -428,10 +427,7 @@ class VesselImpl(
      * @param type of data class to lookup
      * @return the data, or null if it does not exist
      */
-    override suspend fun <T : Any> get(
-        type: KClass<T>,
-        dispatcher: CoroutineDispatcher
-    ): T? = withContext(dispatcher) {
+    override suspend fun <T : Any> get(type: KClass<T>): T? = withContext(Dispatchers.IO) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
 
         val (exists, value) = findCached(type)
@@ -461,10 +457,7 @@ class VesselImpl(
      *
      * @param value of the data class to set/replace.
      */
-    override suspend fun <T : Any> set(
-        value: T,
-        dispatcher: CoroutineDispatcher
-    ): Unit = withContext(dispatcher) {
+    override suspend fun <T : Any> set(value: T): Unit = withContext(Dispatchers.IO) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
 
         if (inCache(value)) {
@@ -490,10 +483,7 @@ class VesselImpl(
      *
      * @param type of the data class to remove.
      */
-    override suspend fun <T : Any> delete(
-        type: KClass<T>,
-        dispatcher: CoroutineDispatcher
-    ): Unit = withContext(dispatcher) {
+    override suspend fun <T : Any> delete(type: KClass<T>): Unit = withContext(Dispatchers.IO) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
 
         val (exists, value) = findCached(type)
@@ -537,9 +527,8 @@ class VesselImpl(
      */
     override suspend fun <OLD : Any, NEW : Any> replace(
         oldType: KClass<OLD>,
-        new: NEW,
-        dispatcher: CoroutineDispatcher
-    ): Unit = withContext(dispatcher) {
+        new: NEW
+    ): Unit = withContext(Dispatchers.IO) {
         check(!closeWasCalled) { "Vessel($name:${hashCode()}) was already closed." }
 
         val newName = typeNameOf(new)

@@ -26,7 +26,6 @@ package com.textnow.android.vessel
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlin.reflect.KClass
@@ -47,18 +46,11 @@ class NoOpVessel : Vessel {
     override fun <T : Any> setBlocking(value: T) { /* no-op */ }
     override fun <T : Any> deleteBlocking(type: Class<T>) { /* no-op */ }
     override fun <T : Any> deleteBlocking(type: KClass<T>) { /* no-op */ }
-    override suspend fun <T : Any> get(type: KClass<T>, dispatcher: CoroutineDispatcher): T? = null
-    override suspend fun <T : Any> set(value: T, dispatcher: CoroutineDispatcher) { /* no-op */ }
-    override suspend fun <T : Any> delete(
-        type: KClass<T>,
-        dispatcher: CoroutineDispatcher
-    ) { /* no-op */ }
+    override suspend fun <T : Any> get(type: KClass<T>): T? = null
+    override suspend fun <T : Any> set(value: T) { /* no-op */ }
+    override suspend fun <T : Any> delete(type: KClass<T>) { /* no-op */ }
     override suspend fun <OLD : Any, NEW : Any> replace(old: OLD, new: NEW) { /* no-op */ }
-    override suspend fun <OLD : Any, NEW : Any> replace(
-        oldType: KClass<OLD>,
-        new: NEW,
-        dispatcher: CoroutineDispatcher
-    ) { /* no-op */ }
+    override suspend fun <OLD : Any, NEW : Any> replace(oldType: KClass<OLD>, new: NEW) { /* no-op */ }
     override fun clear() { /* no-op */ }
     override fun <T : Any> flow(type: KClass<T>): Flow<T?> = emptyFlow()
     override fun <T : Any> livedata(type: KClass<T>): LiveData<T?> = liveData {  }
