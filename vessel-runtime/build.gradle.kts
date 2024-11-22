@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("org.jetbrains.dokka")
     id("maven-publish")
 }
@@ -76,10 +76,10 @@ android {
 dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutine}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutine}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-    kapt("androidx.room:room-compiler:${Versions.room}")
+    ksp("androidx.room:room-compiler:${Versions.room}")
 
     implementation("androidx.room:room-runtime:${Versions.room}")
     implementation("androidx.room:room-ktx:${Versions.room}")

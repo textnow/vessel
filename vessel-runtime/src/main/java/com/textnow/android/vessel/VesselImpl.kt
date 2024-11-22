@@ -544,7 +544,7 @@ class VesselImpl(
                 profiler.time(Span.REPLACE_IN_DB) {
                     dao.replace(
                         oldType = oldName,
-                        new = VesselEntity(
+                        newType = VesselEntity(
                             type = newName,
                             data = toJson(new)
                         )
