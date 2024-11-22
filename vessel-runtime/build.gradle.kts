@@ -61,6 +61,10 @@ android {
         }
     }
 
+    ksp {
+        arg("room.generateKotlin", "true")
+    }
+
     testOptions {
         unitTests.apply {
             isIncludeAndroidResources = true
