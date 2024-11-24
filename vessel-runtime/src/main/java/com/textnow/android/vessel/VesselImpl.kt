@@ -162,7 +162,7 @@ class VesselImpl(
                     continue
                 }
 
-                cache?.set(type, obj as Any)
+                cache?.set(type, obj as Any, true)
 
                 timeoutMS?.let {
                     val duration = System.currentTimeMillis() - startTimeMS
