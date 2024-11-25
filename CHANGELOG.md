@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2024-11-26
+-   Update dokka and github actions to compile correctly
+
 ### Changed
 
 -   `preload`/`preloadBlocking` now return a status object `PreloadReport` which contains info about any errors encountered while preloading
