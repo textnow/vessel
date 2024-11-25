@@ -162,7 +162,7 @@ class VesselImpl(
                     continue
                 }
 
-                cache?.set(type, obj as Any)
+                cache?.set(type, obj as Any, true)
 
                 timeoutMS?.let {
                     val duration = System.currentTimeMillis() - startTimeMS
@@ -544,7 +544,7 @@ class VesselImpl(
                 profiler.time(Span.REPLACE_IN_DB) {
                     dao.replace(
                         oldType = oldName,
-                        new = VesselEntity(
+                        newType = VesselEntity(
                             type = newName,
                             data = toJson(new)
                         )

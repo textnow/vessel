@@ -51,10 +51,10 @@ import org.koin.test.get
 class SlowCache(val insertDelayMS: Long) : DefaultCache() {
     var setCount = 0
 
-    override fun <T : Any> set(key: String, value: T) {
+    override fun <T : Any> set(key: String, value: T, fromPreload: Boolean) {
         setCount++
         Thread.sleep(insertDelayMS)
-        super.set(key, value)
+        super.set(key, value, fromPreload)
     }
 }
 

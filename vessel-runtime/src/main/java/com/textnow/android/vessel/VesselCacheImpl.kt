@@ -18,8 +18,12 @@ open class DefaultCache : VesselCache {
         return hashMap[key] as? T?
     }
 
-    override fun <T : Any> set(key: String, value: T) {
-        hashMap[key] = value
+    override fun <T : Any> set(key: String, value: T, fromPreload: Boolean) {
+        if (fromPreload && hashMap.containsKey(key)) {
+            return
+        } else {
+            hashMap[key] = value
+        }
     }
 
     override fun remove(key: String) {
@@ -53,9 +57,9 @@ open class LruCache(
         }
     }
 
-    override fun <T : Any> set(key: String, value: T) {
+    override fun <T : Any> set(key: String, value: T, fromPreload: Boolean) {
         updateRecentlyUsed(key)
-        backingCache.set(key, value)
+        backingCache.set(key, value, fromPreload)
 
         if (capacity > 0 && backingCache.size > capacity) {
             val toRemove = evictionOrder.removeFirst()
