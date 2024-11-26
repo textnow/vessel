@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+-   Update dokka and github actions to compile correctly
+
+### Changed
 
 -   `preload`/`preloadBlocking` now return a status object `PreloadReport` which contains info about any errors encountered while preloading
 -   `preload`/`preloadBlocking` now catch errors during deserialization of individual values - any errors here are reported in the `PreloadReport` (as above)

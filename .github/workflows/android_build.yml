@@ -16,7 +16,7 @@ jobs:
 
       - name: Archive Reports
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: 'reports'
           path: build/reports/
@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew assemble
 
       - name: Temporarily Archive AARs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: 'temp-aars'
           path: vessel-runtime/build/outputs/aar
