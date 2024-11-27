@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+-   Forcing `get`, `set`, `replace` and `delete` functionality to be on `Dispatchers.IO`
+
+## [1.1.0] - 2023-08-23
+
 -   `preload`/`preloadBlocking` now return a status object `PreloadReport` which contains info about any errors encountered while preloading
 -   `preload`/`preloadBlocking` now catch errors during deserialization of individual values - any errors here are reported in the `PreloadReport` (as above)
 -   For completeness similar info has been added to the profiling data (see `Vessel.snapshot`)
 -   Fixed issue #36
--   Forcing `get`, `set`, `replace` and `delete` functionality to be on `Dispatchers.IO`
 
 ## [1.0.0] - 2023-06-16
 
