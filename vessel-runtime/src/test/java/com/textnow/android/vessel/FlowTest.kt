@@ -36,6 +36,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Before
@@ -84,13 +85,13 @@ class FlowTest : BaseVesselTest<DefaultCache>() {
 
         assertThat(result).containsExactly(null)
 
-        vessel.set(firstSimple)
+        runBlocking { vessel.set(firstSimple) }
         assertThat(result).containsExactly(null, firstSimple)
 
-        vessel.set(mapped)
+        runBlocking { vessel.set(mapped) }
         assertThat(result).containsExactly(null, firstSimple)
 
-        vessel.set(secondSimple)
+        runBlocking { vessel.set(secondSimple) }
         assertThat(result).containsExactly(null, firstSimple, secondSimple)
 
         job.cancel()
