@@ -45,9 +45,9 @@ import org.junit.Rule
 class TestCache : DefaultCache() {
     val numberOfSetCalls = HashMap<String, Int>()
 
-    override fun <T : Any> set(key: String, value: T) {
+    override fun <T : Any> set(key: String, value: T, fromPreload: Boolean) {
         numberOfSetCalls[key] = numberOfSetCalls.getOrDefault(key, 0) + 1
-        super.set(key, value)
+        super.set(key, value, false)
     }
 }
 
@@ -64,7 +64,7 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `already cached data is not read from database again`() = runBlocking {
-        cache!!.set(SimpleData::class.qualifiedName!!, firstSimple)
+        cache!!.set(SimpleData::class.qualifiedName!!, firstSimple, false)
 
         vesselWrapper.get(SimpleData::class)
 
@@ -77,7 +77,7 @@ abstract class BaseVesselCacheUsageTest(async: Boolean) : BaseVesselTest<TestCac
 
     @Test
     fun `already cached data is not written to database again`() = runBlocking {
-        cache!!.set(SimpleData::class.qualifiedName!!, firstSimple)
+        cache!!.set(SimpleData::class.qualifiedName!!, firstSimple, false)
         
         vesselWrapper.set(firstSimple)
 

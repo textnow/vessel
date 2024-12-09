@@ -51,22 +51,29 @@ abstract class BaseVesselCacheTest<T : VesselCache> {
 
     @Test
     fun `set the correct data for cache key`() {
-        cache.set("key", 3)
+        cache.set("key", 3, false)
+        assertThat(cache.get<Int>("key")).isEqualTo(3)
+    }
+
+    @Test
+    fun `set the correct data for cache key if after preload`() {
+        cache.set("key", 3, false)
+        cache.set("key", 4, true)
         assertThat(cache.get<Int>("key")).isEqualTo(3)
     }
 
     @Test
     fun `set changes value for same cache key`() {
-        cache.set("key", 5)
-        cache.set("key", 7)
+        cache.set("key", 5, false)
+        cache.set("key", 7, false)
         assertThat (cache.get<Int>("key")).isEqualTo(7)
         assertThat(cache.size).isEqualTo(1)
     }
 
     @Test
     fun `remove removes the data from the cache`() {
-        cache.set("key", 3)
-        cache.set("key2", 5)
+        cache.set("key", 3, false)
+        cache.set("key2", 5, false)
 
         cache.remove("key2")
         assertThat (cache.get<Int>("key2")).isNull()
@@ -85,9 +92,9 @@ abstract class BaseVesselCacheTest<T : VesselCache> {
 
     @Test
     fun `get produces correct values`() {
-        cache.set("key", 3)
-        cache.set("key", 4)
-        cache.set("other", 5)
+        cache.set("key", 3, false)
+        cache.set("key", 4, false)
+        cache.set("other", 5, false)
         assertThat(cache.get<Int>("key")).isEqualTo(4)
         assertThat(cache.get<Int>("other")).isEqualTo(5)
         assertThat(cache.size).isEqualTo(2)
@@ -101,9 +108,9 @@ abstract class BaseVesselCacheTest<T : VesselCache> {
     @Test
     fun `clear removes all data`() {
         assertThat(cache.size).isZero()
-        cache.set("key", 5)
-        cache.set("key2", 6)
-        cache.set("key", 7)
+        cache.set("key", 5, false)
+        cache.set("key2", 6, false)
+        cache.set("key", 7, false)
         assertThat(cache.size).isEqualTo(2)
         cache.clear()
         assertThat(cache.size).isEqualTo(0)
@@ -128,17 +135,17 @@ class LruCacheTest : BaseVesselCacheTest<LruCache>() {
     @Test
     fun `evicts LRU key when cache reaches capacity`() {
         val lruCache = LruCache(3)
-        lruCache.set("key", 1)
-        lruCache.set("key2", 2)
-        lruCache.set("key3", 3)
+        lruCache.set("key", 1, false)
+        lruCache.set("key2", 2, false)
+        lruCache.set("key3", 3, false)
         assertThat(lruCache.size).isEqualTo(3)
-        lruCache.set("key4", 4)
+        lruCache.set("key4", 4, false)
         assertThat(lruCache.size).isEqualTo(3)
         assertThat(lruCache.get<Int>("key")).isNull()
 
         // move key3 as recently used key
         lruCache.get<Int>("key3")
-        lruCache.set("key5", 5)
+        lruCache.set("key5", 5, false)
         assertThat(lruCache.size).isEqualTo(3)
         assertThat(lruCache.get<Int>("key2")).isNull()
         assertThat(lruCache.get<Int>("key5")).isEqualTo(5)

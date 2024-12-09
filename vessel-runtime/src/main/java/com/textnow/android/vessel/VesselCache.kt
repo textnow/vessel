@@ -14,7 +14,7 @@ interface VesselCache {
     /**
      * Set [key] to [value] in the cache
      */
-    fun <T : Any> set(key: String, value: T)
+    fun <T : Any> set(key: String, value: T, fromPreload: Boolean = false)
 
     /**
      * Remove [key] from the cache

@@ -123,11 +123,11 @@ abstract class VesselDao {
      * Replace an old entity with a new entity inside a single suspending transaction.
      *
      * @param oldType entity to remove
-     * @param new entity to add
+     * @param newType entity to add
      */
     @Transaction
-    open suspend fun replace(oldType: String, new: VesselEntity) {
-        set(new)
+    open suspend fun replace(oldType: String, newType: VesselEntity) {
+        set(newType)
         delete(oldType)
     }
 
