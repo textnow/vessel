@@ -62,6 +62,15 @@ abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest<VesselCache>(
     }
 
     @Test
+    fun `functions are not allowed for data`() {
+        val lambda: () -> Unit = {}
+
+        assertThat {
+            vessel.typeNameOf(lambda)
+        }.isFailure()
+    }
+
+    @Test
     fun `close prevents further calls`() {
         vessel.setBlocking(firstSimple)
         vessel.close()

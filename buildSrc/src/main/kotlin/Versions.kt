@@ -28,7 +28,7 @@ object Versions {
     const val kover = "0.5.0"
     const val intellijCover = "1.0.656"
 
-    const val coroutine = "1.7.3"
+    const val coroutine = "1.8.1"
     const val room = "2.6.1"
     const val lifecycle = "2.8.7"
     const val gson = "2.10.1"

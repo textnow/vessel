@@ -251,6 +251,10 @@ class VesselImpl(
     override fun <T : Any> typeNameOf(value: T): String {
         val name = value.javaClass.kotlin.qualifiedName
 
+        if (value is Function<*>) {
+            throw AssertionError("functions are not allowed.")
+        }
+
         if (name == null) {
             profiler.countBlocking(Event.TYPE_NOT_FOUND)
             throw AssertionError("anonymous classes not allowed. their names will change if the parent code is changed.")
