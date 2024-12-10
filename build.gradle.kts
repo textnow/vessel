@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
         google()
         jcenter()
     }
@@ -22,6 +23,7 @@ plugins {
 allprojects {
     repositories {
         mavenLocal()
+        mavenCentral()
         google()
         jcenter()
     }
