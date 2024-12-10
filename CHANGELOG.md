@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+-   Update JDK for GHA jobs
+
+## [1.2.0] - 2024-12-10
+
+### Changed
 -   Update Gradle - This requires JDK 17
 -   Update kotlin, coroutines, room, gson and test libraries
 -   Update room now compiles kotlin instead of java
@@ -16,12 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 -   Caching interface signatures have changed to allow caching to happen in parallel
 
+## [1.1.1] - 2024-12-04
 
 ### Changed
 -   Update dokka and github actions to compile correctly
-
-### Changed
-
 -   Forcing `get`, `set`, `replace` and `delete` functionality to be on `Dispatchers.IO`
 
 ## [1.1.0] - 2023-08-23
