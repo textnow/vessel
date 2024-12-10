@@ -5,7 +5,6 @@ buildscript {
         mavenLocal()
         mavenCentral()
         google()
-        jcenter()
     }
 
     dependencies {
@@ -25,7 +24,6 @@ allprojects {
         mavenLocal()
         mavenCentral()
         google()
-        jcenter()
     }
 
     tasks.withType<KotlinCompile> {
