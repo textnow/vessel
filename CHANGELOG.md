@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+-   Updated dokka dependencies to the first version that doesn't depend on `jcenter`
+-   Removed references to `jcenter` from our own repository lists
+
+### Changed
 -   Update dokka and github actions to compile correctly
 
 ### Changed

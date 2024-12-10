@@ -4,6 +4,5 @@ include(":vessel-runtime")
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        jcenter()
     }
 }
