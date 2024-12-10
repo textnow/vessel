@@ -43,6 +43,9 @@ import org.robolectric.annotation.Config
  * Tests Vessel with caching and non-caching functionality
  */
 abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest<VesselCache>(cache) {
+
+    abstract class TestAbstractClass
+
     @Test
     fun `reasonable names are chosen for data`() {
         assertThat(vessel.typeNameOf(firstSimple)).isEqualTo("com.textnow.android.vessel.model.SimpleData")
@@ -51,7 +54,17 @@ abstract class VesselImplTest(cache: VesselCache?): BaseVesselTest<VesselCache>(
 
     @Test
     fun `anonymous classes are not allowed for data`() {
-        val lambda: ()->Unit = {}
+        val anonymousClass = object : TestAbstractClass() {}
+
+        assertThat {
+            vessel.typeNameOf(anonymousClass)
+        }.isFailure()
+    }
+
+    @Test
+    fun `functions are not allowed for data`() {
+        val lambda: () -> Unit = {}
+
         assertThat {
             vessel.typeNameOf(lambda)
         }.isFailure()

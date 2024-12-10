@@ -1,18 +1,20 @@
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("org.jetbrains.dokka")
     id("maven-publish")
 }
 
 android {
-    compileSdk = 31
+    namespace = "com.textnow.android.vessel"
+
+    compileSdk = 34
     buildToolsVersion = "31.0.0"
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 33
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
@@ -32,15 +34,18 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+        getByName("debug") {
+            isMinifyEnabled = false
+        }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     afterEvaluate {
@@ -54,6 +59,10 @@ android {
                 }
             }
         }
+    }
+
+    ksp {
+        arg("room.generateKotlin", "true")
     }
 
     testOptions {
@@ -74,7 +83,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutine}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutine}")
 
-    kapt("androidx.room:room-compiler:${Versions.room}")
+    ksp("androidx.room:room-compiler:${Versions.room}")
 
     implementation("androidx.room:room-runtime:${Versions.room}")
     implementation("androidx.room:room-ktx:${Versions.room}")

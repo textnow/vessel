@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+-   Update Gradle - This requires JDK 17
+-   Update kotlin, coroutines, room, gson and test libraries
+-   Update room now compiles kotlin instead of java
+-   Android compile sdk is now 34 and targets 33
+
+### Added
+-   Caching interface signatures have changed to allow caching to happen in parallel
+
+
+### Changed
 -   Update dokka and github actions to compile correctly
 
 ### Changed

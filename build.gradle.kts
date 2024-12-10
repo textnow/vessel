@@ -17,6 +17,7 @@ buildscript {
 plugins {
     id("org.jetbrains.dokka") version Versions.dokka
     id("org.jetbrains.kotlinx.kover") version Versions.kover
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27" apply false
 }
 
 allprojects {

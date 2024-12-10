@@ -56,6 +56,13 @@ abstract class BaseVesselCacheTest<T : VesselCache> {
     }
 
     @Test
+    fun `set the correct data for cache key if after preload`() {
+        cache.set("key", 3)
+        cache.set("key", 4, true)
+        assertThat(cache.get<Int>("key")).isEqualTo(3)
+    }
+
+    @Test
     fun `set changes value for same cache key`() {
         cache.set("key", 5)
         cache.set("key", 7)
