@@ -7,23 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2024-12-10
+
 ### Changed
+
 -   Update JDK for GHA jobs
 
 ## [1.2.0] - 2024-12-10
 
 ### Changed
+
 -   Update Gradle - This requires JDK 17
 -   Update kotlin, coroutines, room, gson and test libraries
 -   Update room now compiles kotlin instead of java
 -   Android compile sdk is now 34 and targets 33
 
 ### Added
+
 -   Caching interface signatures have changed to allow caching to happen in parallel
 
 ## [1.1.1] - 2024-12-04
 
 ### Changed
+
 -   Update dokka and github actions to compile correctly
 -   Forcing `get`, `set`, `replace` and `delete` functionality to be on `Dispatchers.IO`
 
@@ -108,7 +114,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-[Unreleased]: https://github.com/textnow/vessel/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/textnow/vessel/compare/1.2.1...HEAD
+
+[1.2.1]: https://github.com/textnow/vessel/compare/1.0.0...1.2.1
 
 [1.0.0]: https://github.com/textnow/vessel/compare/0.1.3...1.0.0
 
